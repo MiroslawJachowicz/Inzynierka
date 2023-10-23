@@ -2,6 +2,7 @@ plugins {
     id 'com.android.application'
     // Add the Google services Gradle plugin
     id 'com.google.gms.google-services'
+    id 'androidx.navigation.safeargs'
 }
 
 android {
@@ -44,6 +45,11 @@ dependencies {
     implementation 'com.google.firebase:firebase-analytics'
     // Firestore:
     implementation 'com.google.firebase:firebase-firestore'
+    def nav_version = "2.7.4"
+
+    // Java language implementation
+    implementation "androidx.navigation:navigation-fragment:$nav_version"
+    implementation "androidx.navigation:navigation-ui:$nav_version"
 
 
 }

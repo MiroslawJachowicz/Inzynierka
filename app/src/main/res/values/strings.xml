@@ -1,3 +1,17 @@
 <resources>
     <string name="app_name">Inzynierka</string>
+    <string name="e_mail">E-mail</string>
+    <string name="password">Password</string>
+    <string name="sign_up">Sign up</string>
+    <string name="graphic_person">person</string>
+    <string name="login">Login</string>
+    <string name="remember_me">Remember me</string>
+    <string name="forgotten_password">I forgot my password</string>
+    <string name="dont_have_account">Don\'t have account?</string>
+    <string name="have_account">Already have an account?</string>
+    <string name="name">Name</string>
+    <string name="surname">Surname</string>
+    <string name="selectclub">Select Club:</string>
+    <string name="confirm_password">Confirm Password</string>
+    <string name="is_aTrainer">I\'m Trainer</string>
 </resources>
