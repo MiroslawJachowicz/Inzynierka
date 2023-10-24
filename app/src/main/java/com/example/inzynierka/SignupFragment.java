@@ -137,7 +137,7 @@ public class SignupFragment extends Fragment {
                     Map<String,String> userObject= new HashMap<>();
                     userObject.put("userId",currentUserId);
                     userObject.put("username",name);
-                    userObject.put("usersurname",Surname);
+                    userObject.put("surname",Surname);
 
                     collectionReference.add(userObject).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                         @Override
