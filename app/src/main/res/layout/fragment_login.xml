@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@drawable/login_background"
-    >
-
+    tools:context=".LoginFragment">
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
         android:layout_marginBottom="-20dp"
+        android:layout_gravity="bottom"
         app:cardCornerRadius="20dp"
 
         >
@@ -22,7 +22,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="20dp">
+                android:padding="20dp"
+                >
 
                 <TextView
                     android:id="@+id/textView_login"
@@ -93,7 +94,7 @@
                         android:layout_marginBottom="20dp"
                         android:layout_toEndOf="@id/Remember_me_CheckBox"
                         android:gravity="end"
-                        android:text="@string/forgotten_password" />
+                        android:text="@string/i_forgot_my_password" />
                 </RelativeLayout>
 
                 <Button
@@ -137,6 +138,4 @@
         </ScrollView>
     </androidx.cardview.widget.CardView>
 
-
-</RelativeLayout>
-
+</FrameLayout>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav"
+    app:startDestination="@id/loginFragment">
+    <fragment
+        android:id="@+id/signupFragment"
+        android:name="com.example.inzynierka.SignupFragment"
+        android:label="fragment_signup"
+        tools:layout="@layout/fragment_signup" >
+        <action
+            android:id="@+id/action_signupFragment_to_loginFragment"
+            app:destination="@id/loginFragment" />
+        <action
+            android:id="@+id/action_signupFragment_to_clubFragment"
+            app:destination="@id/clubFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="com.example.inzynierka.LoginFragment"
+        android:label="fraagment_login"
+        tools:layout="@layout/fragment_login" >
+        <action
+            android:id="@+id/action_loginFragment_to_signupFragment"
+            app:destination="@id/signupFragment" />
+        <action
+            android:id="@+id/action_loginFragment_to_forgottenPasswordFragment"
+            app:destination="@id/forgottenPasswordFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/forgottenPasswordFragment"
+        android:name="com.example.inzynierka.ForgottenPasswordFragment"
+        android:label="fragment_forgotten_password"
+        tools:layout="@layout/fragment_forgotten_password" >
+        <action
+            android:id="@+id/action_forgottenPasswordFragment_to_loginFragment"
+            app:destination="@id/loginFragment" />
+        <action
+            android:id="@+id/action_forgottenPasswordFragment_to_clubFragment"
+            app:destination="@id/clubFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/clubFragment"
+        android:name="com.example.inzynierka.ClubFragment"
+        android:label="fragment_club"
+        tools:layout="@layout/fragment_club" />
+</navigation>

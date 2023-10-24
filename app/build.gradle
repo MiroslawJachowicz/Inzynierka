@@ -46,6 +46,8 @@ dependencies {
     // Firestore:
     implementation 'com.google.firebase:firebase-firestore'
     def nav_version = "2.7.4"
+    //Authentication
+    implementation 'com.google.firebase:firebase-auth'
 
     // Java language implementation
     implementation "androidx.navigation:navigation-fragment:$nav_version"

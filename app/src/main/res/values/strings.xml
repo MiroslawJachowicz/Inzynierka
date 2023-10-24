@@ -6,7 +6,7 @@
     <string name="graphic_person">person</string>
     <string name="login">Login</string>
     <string name="remember_me">Remember me</string>
-    <string name="forgotten_password">I forgot my password</string>
+    <string name="i_forgot_my_password">I forgot my password</string>
     <string name="dont_have_account">Don\'t have account?</string>
     <string name="have_account">Already have an account?</string>
     <string name="name">Name</string>
@@ -14,4 +14,11 @@
     <string name="selectclub">Select Club:</string>
     <string name="confirm_password">Confirm Password</string>
     <string name="is_aTrainer">I\'m Trainer</string>
+    <string name="password_reset">Password Restart</string>
+    <string name="password_reset_info">Please provide the email address of the account for which you want to reset the password.</string>
+    <string name="back">Back</string>
+    <string name="restart">Restart</string>
+    <string name="select_gender">Select your gender:</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

@@ -1,14 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@drawable/login_background">
+    android:background="@drawable/login_background"
+    tools:context=".SignupFragment">
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
+        android:layout_gravity="bottom"
         android:layout_marginBottom="-20dp"
         app:cardCornerRadius="20dp"
 
@@ -59,9 +61,27 @@
                     android:ems="10"
                     android:inputType="textPersonName"
                     android:hint="@string/surname" />
-
                 <TextView
-                    android:id="@+id/textView"
+                    android:id="@+id/GendertextView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginRight="20dp"
+                    android:layout_marginBottom="5dp"
+                    android:text="@string/select_gender"
+                    android:textStyle="bold"
+                    />
+
+                <Spinner
+                    android:id="@+id/Genderspinner"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginRight="20dp"
+                    android:layout_marginBottom="5dp"
+                    />
+                <TextView
+                    android:id="@+id/ClubtextView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="20dp"
@@ -137,7 +157,7 @@
                     android:inputType="textPassword" />
 
                 <Button
-                    android:id="@+id/login_button"
+                    android:id="@+id/signup_button"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="20dp"
@@ -158,7 +178,7 @@
                         android:layout_marginEnd="5dp"
                         android:text="@string/have_account"/>
                     <TextView
-                        android:id="@+id/sign_up_TextView"
+                        android:id="@+id/login_TextView"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="20dp"
@@ -171,4 +191,4 @@
         </ScrollView>
     </androidx.cardview.widget.CardView>
 
-</RelativeLayout>
+</FrameLayout>
