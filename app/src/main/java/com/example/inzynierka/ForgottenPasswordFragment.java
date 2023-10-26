@@ -65,6 +65,7 @@ public class ForgottenPasswordFragment extends Fragment {
                                                 @Override
                                                 public void onSuccess(Void unused) {
                                                     Toast.makeText(requireContext(), "Reset password link has been sent", Toast.LENGTH_SHORT).show();
+                                                    Navigation.findNavController(v).navigate(ForgottenPasswordFragmentDirections.actionForgottenPasswordFragmentToLoginFragment());
                                                 }
                                             }).addOnFailureListener(new OnFailureListener() {
                                                 @Override
