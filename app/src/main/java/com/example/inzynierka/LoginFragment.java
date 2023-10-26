@@ -100,24 +100,26 @@ public class LoginFragment extends Fragment {
                                     if (task.isSuccessful()) {
                                         if (!task.getResult().isEmpty()) {
                                             Login(email,password);
+                                        }else if (!android.util.Patterns.EMAIL_ADDRESS.matcher(editTextEmailAddress.getText().toString().trim()).matches()) {
+                                            Toast.makeText(requireContext(), "Please enter a email address", Toast.LENGTH_SHORT).show();
                                         }else {
                                             Toast.makeText(requireContext(), "E-mail is not assigned to any account", Toast.LENGTH_SHORT).show();
                                     }
                                     }
                                 }
                             });
-                } else if (!TextUtils.isEmpty(editTextEmailAddress.getText().toString())){
-                    Toast.makeText(requireContext(),"E-mail field is empty",Toast.LENGTH_SHORT).show();
-                } else if (!TextUtils.isEmpty(editTextPassword.getText().toString())) {
+                } else if (TextUtils.isEmpty(editTextEmailAddress.getText().toString())) {
+                    Toast.makeText(requireContext(), "E-mail field is empty", Toast.LENGTH_SHORT).show();
+                } else if (TextUtils.isEmpty(editTextPassword.getText().toString())) {
                     Toast.makeText(requireContext(),"Password field is empty",Toast.LENGTH_SHORT).show();
                 } else if (editTextPassword.length()>=6) {
                     Toast.makeText(requireContext(),"Password is too short",Toast.LENGTH_SHORT).show();
                 }
+
             }
         });
 
     }
-
     private void Login(String email, String password) {
         firebaseAuth.signInWithEmailAndPassword(email, password).addOnSuccessListener(new OnSuccessListener<AuthResult>() {
             @Override
@@ -144,8 +146,11 @@ public class LoginFragment extends Fragment {
                                 CurrentUser.setUserId(snapshot.getString("UserId"));
 
                                 Navigation.findNavController(login_btn).navigate(LoginFragmentDirections.actionLoginFragmentToClubFragment());
+
                             }
                         }
+
+
                     }
                 });
             }

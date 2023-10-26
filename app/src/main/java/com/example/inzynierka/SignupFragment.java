@@ -121,6 +121,7 @@ public class SignupFragment extends Fragment {
                         && TextUtils.equals(editText_Password.getText().toString(), editText_ConfirmPassword.getText().toString())
                         && editText_Password.length()>=6
                         && editText_ConfirmPassword.length()>=6
+                        && android.util.Patterns.EMAIL_ADDRESS.matcher(editText_TextEmailAddress.getText().toString().trim()).matches()
                 ) {
                     String name = edit_Text_Name.getText().toString().trim();
                     String Surname = edit_Text_Surname.getText().toString().trim();
@@ -150,6 +151,8 @@ public class SignupFragment extends Fragment {
                     Toast.makeText(requireContext(),"Passwords aren't the same",Toast.LENGTH_SHORT).show();
                 }else if(editText_Password.length()<6 || editText_ConfirmPassword.length()<6){
                     Toast.makeText(requireContext(),"Password is too short",Toast.LENGTH_SHORT).show();
+                }else if(!android.util.Patterns.EMAIL_ADDRESS.matcher(editText_TextEmailAddress.getText().toString().trim()).matches()){
+                    Toast.makeText(requireContext(),"Please enter a email address",Toast.LENGTH_SHORT).show();
                 }
             }
         });
