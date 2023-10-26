@@ -12,9 +12,6 @@
         <action
             android:id="@+id/action_signupFragment_to_loginFragment"
             app:destination="@id/loginFragment" />
-        <action
-            android:id="@+id/action_signupFragment_to_clubFragment"
-            app:destination="@id/clubFragment" />
     </fragment>
     <fragment
         android:id="@+id/loginFragment"
@@ -27,6 +24,9 @@
         <action
             android:id="@+id/action_loginFragment_to_forgottenPasswordFragment"
             app:destination="@id/forgottenPasswordFragment" />
+        <action
+            android:id="@+id/action_loginFragment_to_clubFragment"
+            app:destination="@id/clubFragment" />
     </fragment>
     <fragment
         android:id="@+id/forgottenPasswordFragment"
@@ -36,9 +36,6 @@
         <action
             android:id="@+id/action_forgottenPasswordFragment_to_loginFragment"
             app:destination="@id/loginFragment" />
-        <action
-            android:id="@+id/action_forgottenPasswordFragment_to_clubFragment"
-            app:destination="@id/clubFragment" />
     </fragment>
     <fragment
         android:id="@+id/clubFragment"

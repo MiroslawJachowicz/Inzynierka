@@ -10,10 +10,12 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
+
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -25,6 +27,7 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -40,6 +43,8 @@ public class SignupFragment extends Fragment {
     EditText editText_ConfirmPassword;
     Button signup_btn ;
     TextView textViewlogin;
+    EditText clubselect;
+
 
     private FirebaseAuth firebaseAuth;
     private FirebaseAuth.AuthStateListener authStateListener;
@@ -60,7 +65,6 @@ public class SignupFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
 
         firebaseAuth=FirebaseAuth.getInstance();
-
         authStateListener= new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
@@ -86,32 +90,69 @@ public class SignupFragment extends Fragment {
         editText_ConfirmPassword=requireView().findViewById(R.id.editTextConfirmPassword);
 
         signup_btn=requireView().findViewById(R.id.signup_button);
+
+        clubselect=requireView().findViewById(R.id.editTextTextClub);
+
         signup_btn.setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View v) {
+                collectionReference.whereEqualTo("email", editText_TextEmailAddress.getText().toString())
+                        .get()
+                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    if (!task.getResult().isEmpty()) {
+                                        Toast.makeText(requireContext(), "E-mail already exists", Toast.LENGTH_SHORT).show();
+                                    }
+                                } else {
+                                    Toast.makeText(requireContext(), "Something went wrong", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
+
                 if(!TextUtils.isEmpty(edit_Text_Name.getText().toString())
                         && !TextUtils.isEmpty(edit_Text_Surname.getText().toString())
                         && !TextUtils.isEmpty(editText_TextEmailAddress.getText().toString())
                         && !TextUtils.isEmpty(editText_Password.getText().toString())
                         && !TextUtils.isEmpty(editText_ConfirmPassword.getText().toString())
-                        && TextUtils.equals(editText_Password.getText().toString(), editText_ConfirmPassword.getText().toString()))
-                {
-                    String name=edit_Text_Name.getText().toString().trim();
-                    String Surname=edit_Text_Surname.getText().toString().trim();
-                    String email=editText_TextEmailAddress.getText().toString().trim();
-                    String password=editText_Password.getText().toString().trim();
-                    CreateAccount(name,Surname,email,password);
-                }
-                else if (!TextUtils.equals(editText_Password.getText().toString(), editText_ConfirmPassword.getText().toString())) {
+                        && !TextUtils.isEmpty(clubselect.getText().toString())
+                        && TextUtils.equals(editText_Password.getText().toString(), editText_ConfirmPassword.getText().toString())
+                        && editText_Password.length()>=6
+                        && editText_ConfirmPassword.length()>=6
+                ) {
+                    String name = edit_Text_Name.getText().toString().trim();
+                    String Surname = edit_Text_Surname.getText().toString().trim();
+                    String email = editText_TextEmailAddress.getText().toString().trim();
+                    String password = editText_Password.getText().toString().trim();
+                    String club = clubselect.getText().toString().trim();
+                    String is_Trainer;
+                    if (Trainer_CheckBox.isChecked()) {
+                        is_Trainer = "Trainer";
+                    } else {
+                        is_Trainer = "Player";
+                    }
+                    CreateAccount(name, Surname, email, password, club,is_Trainer);
+                }else if(TextUtils.isEmpty(edit_Text_Name.getText().toString())){
+                    Toast.makeText(requireContext(),"Name field is empty",Toast.LENGTH_SHORT).show();
+                }else if(TextUtils.isEmpty(edit_Text_Surname.getText().toString())){
+                    Toast.makeText(requireContext(),"Surname field is empty",Toast.LENGTH_SHORT).show();
+                }else if(TextUtils.isEmpty(editText_TextEmailAddress.getText().toString())){
+                    Toast.makeText(requireContext(),"E-mail field is empty",Toast.LENGTH_SHORT).show();
+                } else if (TextUtils.isEmpty(clubselect.getText().toString())) {
+                    Toast.makeText(requireContext(),"Club field is empty",Toast.LENGTH_SHORT).show();
+                } else if(TextUtils.isEmpty(editText_Password.getText().toString())){
+                    Toast.makeText(requireContext(),"Password field is empty",Toast.LENGTH_SHORT).show();
+                }else if(TextUtils.isEmpty(editText_ConfirmPassword.getText().toString())) {
+                    Toast.makeText(requireContext(), "Confirm Password field is empty", Toast.LENGTH_SHORT).show();
+                }else if (!TextUtils.equals(editText_Password.getText().toString(), editText_ConfirmPassword.getText().toString())) {
                     Toast.makeText(requireContext(),"Passwords aren't the same",Toast.LENGTH_SHORT).show();
-                }
-                else{
-                    Toast.makeText(requireContext(),"Some fields are empty",Toast.LENGTH_SHORT).show();
+                }else if(editText_Password.length()<6 || editText_ConfirmPassword.length()<6){
+                    Toast.makeText(requireContext(),"Password is too short",Toast.LENGTH_SHORT).show();
                 }
             }
         });
-
-
 
         textViewlogin = requireView().findViewById(R.id.login_TextView);
         textViewlogin.setOnClickListener(new View.OnClickListener() {
@@ -121,24 +162,25 @@ public class SignupFragment extends Fragment {
             }
         });
 
-
-
-
     }
 
-    private void CreateAccount(final String name, final String Surname, String email, String password) {
+    private void CreateAccount( String name,  String Surname, String email, String password,String club,String is_Trainer ) {
 
         firebaseAuth.createUserWithEmailAndPassword(email,password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if(task.isSuccessful()){
                     currentUser=firebaseAuth.getCurrentUser();
-                    final String currentUserId=currentUser.getUid();
-                    Map<String,String> userObject= new HashMap<>();
-                    userObject.put("userId",currentUserId);
-                    userObject.put("username",name);
-                    userObject.put("surname",Surname);
-
+                    assert currentUser != null;
+                    final String currentUserId = currentUser.getUid();
+                    Map<String, Object> userObject = new HashMap<>();
+                    userObject.put("userId", currentUserId);
+                    userObject.put("username", name);
+                    userObject.put("surname", Surname);
+                    userObject.put("email", email);
+                    userObject.put("role", is_Trainer);
+                    userObject.put("club",club);
+                    ;
                     collectionReference.add(userObject).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                         @Override
                         public void onSuccess(DocumentReference documentReference) {
@@ -146,17 +188,16 @@ public class SignupFragment extends Fragment {
                                 @Override
                                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                                     if(task.getResult().exists()){
-                                        String name=task.getResult().getString("username");
-                                        String surname=task.getResult().getString("surname");
-                                        Navigation.findNavController(signup_btn).navigate(SignupFragmentDirections.actionSignupFragmentToClubFragment());
+                                        Toast.makeText(requireContext(), "Account have been created", Toast.LENGTH_SHORT).show();
+                                        Navigation.findNavController(signup_btn).navigate(SignupFragmentDirections.actionSignupFragmentToLoginFragment());
                                     }
                                 }
-                            }).addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception e) {
-                                    Toast.makeText(requireContext(),"Something went wrong",Toast.LENGTH_SHORT).show();
-                                }
                             });
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Toast.makeText(requireContext(),"Something went wrong"+e,Toast.LENGTH_SHORT).show();
                         }
                     });
                 }

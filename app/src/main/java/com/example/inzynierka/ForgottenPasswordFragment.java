@@ -27,6 +27,8 @@ public class ForgottenPasswordFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+
+        
         back_btn= requireView().findViewById(R.id.back_to_login_button);
         back_btn.setOnClickListener(new View.OnClickListener() {
             @Override
