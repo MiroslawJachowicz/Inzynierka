@@ -90,9 +90,9 @@ public class LoginFragment extends Fragment {
                         int inputType = editTextPassword.getInputType();
 
                         if (inputType == 129) {
-                            editTextPassword.setInputType(145); // Zmiana na "text"
+                            editTextPassword.setInputType(145);
                         } else {
-                            editTextPassword.setInputType(129); // Zmiana na "textPassword"
+                            editTextPassword.setInputType(129);
                         }
 
                         editTextPassword.setSelection(editTextPassword.getText().length());
