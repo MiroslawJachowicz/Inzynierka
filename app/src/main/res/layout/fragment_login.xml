@@ -37,7 +37,7 @@
                     android:textStyle="bold" />
 
                 <EditText
-                    android:id="@+id/editTextTextEmailAddress"
+                    android:id="@+id/editTextTextEmailAddressLogin"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
                     android:layout_marginLeft="20dp"
@@ -45,7 +45,6 @@
                     android:layout_marginBottom="20dp"
                     android:autofillHints="emailAddress"
                     android:drawableStart="@drawable/email_icon"
-                    android:drawableEnd="@drawable/email_check_icon"
                     android:drawablePadding="10dp"
                     android:ems="10"
                     android:hint="@string/e_mail"
@@ -60,7 +59,6 @@
                     android:layout_marginBottom="5dp"
                     android:autofillHints="password"
                     android:drawableStart="@drawable/lock_icon"
-                    android:drawableEnd="@drawable/eye_icon"
                     android:drawablePadding="10dp"
                     android:ems="10"
                     android:hint="@string/password"

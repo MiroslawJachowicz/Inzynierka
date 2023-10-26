@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -17,8 +16,10 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -39,7 +40,6 @@ public class LoginFragment extends Fragment {
     TextView textViewforgottenpassword;
 
     private FirebaseAuth firebaseAuth;
-    private FirebaseAuth.AuthStateListener authStateListener;
     private FirebaseUser currentUser;
 
     private FirebaseFirestore Firebasedb = FirebaseFirestore.getInstance();
@@ -76,32 +76,9 @@ public class LoginFragment extends Fragment {
 
         });
 
-        editTextEmailAddress = requireView().findViewById(R.id.editTextTextEmailAddress);
+        editTextEmailAddress = requireView().findViewById(R.id.editTextTextEmailAddressLogin);
 
         editTextPassword = requireView().findViewById(R.id.editTextTextPassword);
-
-        editTextPassword.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                final int DRAWABLE_RIGHT = 2;
-
-                if (event.getAction() == MotionEvent.ACTION_UP) {
-                    if (event.getRawX() >= (editTextPassword.getRight() - editTextPassword.getCompoundDrawables()[DRAWABLE_RIGHT].getBounds().width())) {
-                        int inputType = editTextPassword.getInputType();
-
-                        if (inputType == 129) {
-                            editTextPassword.setInputType(145);
-                        } else {
-                            editTextPassword.setInputType(129);
-                        }
-
-                        editTextPassword.setSelection(editTextPassword.getText().length());
-                        return true;
-                    }
-                }
-                return false;
-            }
-        });
 
         login_btn = requireView().findViewById(R.id.login_button);
 
@@ -111,10 +88,24 @@ public class LoginFragment extends Fragment {
                 if(!TextUtils.isEmpty(editTextEmailAddress.getText().toString())
                         && !TextUtils.isEmpty(editTextPassword.getText().toString())
                         && editTextPassword.length()>=6
-                ) {
+                )
+                {
                     String email = editTextEmailAddress.getText().toString().trim();
                     String password = editTextPassword.getText().toString().trim();
-                    Login(email,password);
+                    collectionReference.whereEqualTo("email", editTextEmailAddress.getText().toString())
+                            .get()
+                            .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                @Override
+                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                    if (task.isSuccessful()) {
+                                        if (!task.getResult().isEmpty()) {
+                                            Login(email,password);
+                                        }else {
+                                            Toast.makeText(requireContext(), "E-mail is not assigned to any account", Toast.LENGTH_SHORT).show();
+                                    }
+                                    }
+                                }
+                            });
                 } else if (!TextUtils.isEmpty(editTextEmailAddress.getText().toString())){
                     Toast.makeText(requireContext(),"E-mail field is empty",Toast.LENGTH_SHORT).show();
                 } else if (!TextUtils.isEmpty(editTextPassword.getText().toString())) {
@@ -161,7 +152,7 @@ public class LoginFragment extends Fragment {
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                Toast.makeText(requireContext(),"Something went wrong"+e,Toast.LENGTH_SHORT).show();
+                Toast.makeText(requireContext(),"Incorrect email or password",Toast.LENGTH_SHORT).show();
             }
         });
     }

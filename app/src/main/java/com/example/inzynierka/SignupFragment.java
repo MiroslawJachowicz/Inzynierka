@@ -83,7 +83,7 @@ public class SignupFragment extends Fragment {
 
         Trainer_CheckBox= requireView().findViewById(R.id.Trainer_CheckBox);
 
-        editText_TextEmailAddress=requireView().findViewById(R.id.editTextTextEmailAddress);
+        editText_TextEmailAddress=requireView().findViewById(R.id.editTextTextEmailAddressSignup);
 
         editText_Password=requireView().findViewById(R.id.editTextPassword);
 

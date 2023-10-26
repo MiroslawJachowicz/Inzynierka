@@ -86,7 +86,7 @@
                     android:text="@string/is_aTrainer" />
 
                 <EditText
-                    android:id="@+id/editTextTextEmailAddress"
+                    android:id="@+id/editTextTextEmailAddressSignup"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
                     android:layout_marginLeft="20dp"
