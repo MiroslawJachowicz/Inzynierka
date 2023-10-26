@@ -1,5 +1,6 @@
 package com.example.inzynierka;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -51,6 +52,7 @@ public class LoginFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_login, container, false);
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -129,7 +131,7 @@ public class LoginFragment extends Fragment {
         firebaseAuth.signInWithEmailAndPassword(email, password).addOnSuccessListener(new OnSuccessListener<AuthResult>() {
             @Override
             public void onSuccess(AuthResult authResult) {
-                FirebaseUser currentUser=firebaseAuth.getCurrentUser();
+                currentUser=firebaseAuth.getCurrentUser();
                 assert currentUser!=null;
                 final String currentUserId= currentUser.getUid();
 
