@@ -26,9 +26,7 @@
             app:destination="@id/forgottenPasswordFragment" />
         <action
             android:id="@+id/action_loginFragment_to_clubFragment"
-            app:destination="@id/clubFragment"
-            app:popUpTo="@+id/loginFragment"
-            app:popUpToInclusive="true"  />
+            app:destination="@id/clubFragment" />
     </fragment>
     <fragment
         android:id="@+id/forgottenPasswordFragment"

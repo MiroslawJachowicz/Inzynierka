@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/club_nav"
+    app:startDestination="@id/memberFragment">
+
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="com.example.inzynierka.ProfileFragment"
+        android:label="fragment_profile"
+        tools:layout="@layout/fragment_profile" />
+    <fragment
+        android:id="@+id/calendarFragment"
+        android:name="com.example.inzynierka.CalendarFragment"
+        android:label="fragment_calendar"
+        tools:layout="@layout/fragment_calendar" />
+    <fragment
+        android:id="@+id/exerciseFragment"
+        android:name="com.example.inzynierka.ExerciseFragment"
+        android:label="fragment_exercise"
+        tools:layout="@layout/fragment_exercise" />
+    <fragment
+        android:id="@+id/squadFragment"
+        android:name="com.example.inzynierka.SquadFragment"
+        android:label="fragment_squad"
+        tools:layout="@layout/fragment_squad" />
+    <fragment
+        android:id="@+id/memberFragment"
+        android:name="com.example.inzynierka.MemberFragment"
+        android:label="fragment_member"
+        tools:layout="@layout/fragment_member" />
+</navigation>
