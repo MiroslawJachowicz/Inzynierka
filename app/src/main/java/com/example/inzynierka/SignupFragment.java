@@ -59,22 +59,14 @@ public class SignupFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_signup, container, false);
     }
 
-
     @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
         firebaseAuth=FirebaseAuth.getInstance();
         authStateListener= new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 currentUser= firebaseAuth.getCurrentUser();
-                if(currentUser!=null){
-
-                }
-                else{
-
-                }
             }
         };
         edit_Text_Name= requireView().findViewById(R.id.editTextName);
@@ -207,6 +199,7 @@ public class SignupFragment extends Fragment {
             }
         });
     }
+
     @Override
     public void onStart() {
         super.onStart();

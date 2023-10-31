@@ -1,12 +1,12 @@
 package com.example.inzynierka;
 
-import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -38,6 +38,7 @@ public class LoginFragment extends Fragment {
     Button login_btn;
     TextView textViewsignup;
     TextView textViewforgottenpassword;
+    CheckBox remerberme_checkbox;
 
     private FirebaseAuth firebaseAuth;
     private FirebaseUser currentUser;
@@ -52,10 +53,9 @@ public class LoginFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_login, container, false);
     }
 
-    @SuppressLint("ClickableViewAccessibility")
     @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
 
         firebaseAuth=FirebaseAuth.getInstance();
 
@@ -80,6 +80,9 @@ public class LoginFragment extends Fragment {
 
         editTextPassword = requireView().findViewById(R.id.editTextTextPassword);
 
+        remerberme_checkbox = requireView().findViewById(R.id.checkBoxRememberMe);
+
+
         login_btn = requireView().findViewById(R.id.login_button);
 
         login_btn.setOnClickListener(new View.OnClickListener() {
@@ -99,12 +102,14 @@ public class LoginFragment extends Fragment {
                                 public void onComplete(@NonNull Task<QuerySnapshot> task) {
                                     if (task.isSuccessful()) {
                                         if (!task.getResult().isEmpty()) {
+
                                             Login(email,password);
+
                                         }else if (!android.util.Patterns.EMAIL_ADDRESS.matcher(editTextEmailAddress.getText().toString().trim()).matches()) {
                                             Toast.makeText(requireContext(), "Please enter a email address", Toast.LENGTH_SHORT).show();
                                         }else {
                                             Toast.makeText(requireContext(), "E-mail is not assigned to any account", Toast.LENGTH_SHORT).show();
-                                    }
+                                        }
                                     }
                                 }
                             });
@@ -118,8 +123,8 @@ public class LoginFragment extends Fragment {
 
             }
         });
-
     }
+
     private void Login(String email, String password) {
         firebaseAuth.signInWithEmailAndPassword(email, password).addOnSuccessListener(new OnSuccessListener<AuthResult>() {
             @Override
@@ -161,6 +166,7 @@ public class LoginFragment extends Fragment {
             }
         });
     }
+
 }
 
 

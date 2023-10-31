@@ -8,7 +8,8 @@
         android:id="@+id/signupFragment"
         android:name="com.example.inzynierka.SignupFragment"
         android:label="fragment_signup"
-        tools:layout="@layout/fragment_signup" >
+        tools:layout="@layout/fragment_signup"
+        >
         <action
             android:id="@+id/action_signupFragment_to_loginFragment"
             app:destination="@id/loginFragment" />
@@ -16,7 +17,7 @@
     <fragment
         android:id="@+id/loginFragment"
         android:name="com.example.inzynierka.LoginFragment"
-        android:label="fraagment_login"
+        android:label="fragment_login"
         tools:layout="@layout/fragment_login" >
         <action
             android:id="@+id/action_loginFragment_to_signupFragment"
@@ -26,7 +27,9 @@
             app:destination="@id/forgottenPasswordFragment" />
         <action
             android:id="@+id/action_loginFragment_to_clubFragment"
-            app:destination="@id/clubFragment" />
+            app:destination="@id/clubFragment"
+            app:popUpTo="@id/nav"
+            app:popUpToInclusive="true"/>
     </fragment>
     <fragment
         android:id="@+id/forgottenPasswordFragment"
@@ -41,5 +44,6 @@
         android:id="@+id/clubFragment"
         android:name="com.example.inzynierka.ClubFragment"
         android:label="fragment_club"
-        tools:layout="@layout/fragment_club" />
+        tools:layout="@layout/fragment_club"
+        />
 </navigation>

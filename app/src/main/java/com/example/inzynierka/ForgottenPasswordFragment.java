@@ -41,9 +41,8 @@ public class ForgottenPasswordFragment extends Fragment {
     }
 
     @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
         firebaseAuth=FirebaseAuth.getInstance();
 
         editTextTextEmailAddress=requireView().findViewById(R.id.editTextTextForgottenEmailAddress);

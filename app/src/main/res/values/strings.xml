@@ -18,6 +18,10 @@
     <string name="back">Back</string>
     <string name="restart">Restart</string>
     <string name="club_name">Club Name</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="profile_name">Name:</string>
+    <string name="profile_surname">Surname:</string>
+    <string name="profile_email">E-mail:</string>
+    <string name="profile_role">Role:</string>
+    <string name="profile_club">Club:</string>
+    <string name="profile_logout">Logout</string>
 </resources>
