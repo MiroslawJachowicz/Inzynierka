@@ -1,5 +1,7 @@
 package com.example.inzynierka;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -7,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -29,8 +32,6 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-
-import Util.CurrentUser;
 
 public class LoginFragment extends Fragment {
     EditText editTextEmailAddress;
@@ -57,79 +58,97 @@ public class LoginFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        firebaseAuth=FirebaseAuth.getInstance();
-
-        textViewsignup = requireView().findViewById(R.id.sign_up_TextView);
-        textViewsignup.setOnClickListener(new View.OnClickListener() {
+        remerberme_checkbox = view.findViewById(R.id.checkBoxRememberMe);
+        remerberme_checkbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
-            public void onClick(View v) {
-                Navigation.findNavController(v).navigate(LoginFragmentDirections.actionLoginFragmentToSignupFragment());
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                SharedPreferences sharedPreferences = requireActivity().getPreferences(Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putBoolean("Remember me", isChecked);
+                editor.apply();
             }
         });
 
-        textViewforgottenpassword = requireView().findViewById(R.id.Forgotten_Password_TextView);
-        textViewforgottenpassword.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Navigation.findNavController(v).navigate(LoginFragmentDirections.actionLoginFragmentToForgottenPasswordFragment());
-            }
+        boolean isRememberMeChecked = requireActivity().getPreferences(Context.MODE_PRIVATE)
+                .getBoolean("REMEMBER_ME", false);
+        remerberme_checkbox.setChecked(isRememberMeChecked);
 
-        });
+        firebaseAuth = FirebaseAuth.getInstance();
+        currentUser = firebaseAuth.getCurrentUser();
 
-        editTextEmailAddress = requireView().findViewById(R.id.editTextTextEmailAddressLogin);
+        if (currentUser != null && isRememberMeChecked) {
 
-        editTextPassword = requireView().findViewById(R.id.editTextTextPassword);
+            Navigation.findNavController(view).navigate(LoginFragmentDirections.actionLoginFragmentToClubFragment());
 
-        remerberme_checkbox = requireView().findViewById(R.id.checkBoxRememberMe);
+        } else {
 
+            textViewsignup = requireView().findViewById(R.id.sign_up_TextView);
+            textViewsignup.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Navigation.findNavController(v).navigate(LoginFragmentDirections.actionLoginFragmentToSignupFragment());
+                }
+            });
 
-        login_btn = requireView().findViewById(R.id.login_button);
-
-        login_btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(!TextUtils.isEmpty(editTextEmailAddress.getText().toString())
-                        && !TextUtils.isEmpty(editTextPassword.getText().toString())
-                        && editTextPassword.length()>=6
-                )
-                {
-                    String email = editTextEmailAddress.getText().toString().trim();
-                    String password = editTextPassword.getText().toString().trim();
-                    collectionReference.whereEqualTo("email", editTextEmailAddress.getText().toString())
-                            .get()
-                            .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                @Override
-                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                    if (task.isSuccessful()) {
-                                        if (!task.getResult().isEmpty()) {
-
-                                            Login(email,password);
-
-                                        }else if (!android.util.Patterns.EMAIL_ADDRESS.matcher(editTextEmailAddress.getText().toString().trim()).matches()) {
-                                            Toast.makeText(requireContext(), "Please enter a email address", Toast.LENGTH_SHORT).show();
-                                        }else {
-                                            Toast.makeText(requireContext(), "E-mail is not assigned to any account", Toast.LENGTH_SHORT).show();
-                                        }
-                                    }
-                                }
-                            });
-                } else if (TextUtils.isEmpty(editTextEmailAddress.getText().toString())) {
-                    Toast.makeText(requireContext(), "E-mail field is empty", Toast.LENGTH_SHORT).show();
-                } else if (TextUtils.isEmpty(editTextPassword.getText().toString())) {
-                    Toast.makeText(requireContext(),"Password field is empty",Toast.LENGTH_SHORT).show();
-                } else if (editTextPassword.length()>=6) {
-                    Toast.makeText(requireContext(),"Password is too short",Toast.LENGTH_SHORT).show();
+            textViewforgottenpassword = requireView().findViewById(R.id.Forgotten_Password_TextView);
+            textViewforgottenpassword.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Navigation.findNavController(v).navigate(LoginFragmentDirections.actionLoginFragmentToForgottenPasswordFragment());
                 }
 
-            }
-        });
-    }
+            });
 
+            editTextEmailAddress = requireView().findViewById(R.id.editTextTextEmailAddressLogin);
+
+            editTextPassword = requireView().findViewById(R.id.editTextTextPassword);
+
+            login_btn = requireView().findViewById(R.id.login_button);
+
+            login_btn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (!TextUtils.isEmpty(editTextEmailAddress.getText().toString())
+                            && !TextUtils.isEmpty(editTextPassword.getText().toString())
+                            && editTextPassword.length() >= 6
+                    ) {
+                        String email = editTextEmailAddress.getText().toString().trim();
+                        String password = editTextPassword.getText().toString().trim();
+                        collectionReference.whereEqualTo("email", editTextEmailAddress.getText().toString())
+                                .get()
+                                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                        if (task.isSuccessful()) {
+                                            if (!task.getResult().isEmpty()) {
+
+                                                Login(email, password);
+
+                                            } else if (!android.util.Patterns.EMAIL_ADDRESS.matcher(editTextEmailAddress.getText().toString().trim()).matches()) {
+                                                Toast.makeText(requireContext(), "Please enter a email address", Toast.LENGTH_SHORT).show();
+                                            } else {
+                                                Toast.makeText(requireContext(), "E-mail is not assigned to any account", Toast.LENGTH_SHORT).show();
+                                            }
+                                        }
+                                    }
+                                });
+                    } else if (TextUtils.isEmpty(editTextEmailAddress.getText().toString())) {
+                        Toast.makeText(requireContext(), "E-mail field is empty", Toast.LENGTH_SHORT).show();
+                    } else if (TextUtils.isEmpty(editTextPassword.getText().toString())) {
+                        Toast.makeText(requireContext(), "Password field is empty", Toast.LENGTH_SHORT).show();
+                    } else if (editTextPassword.length() >= 6) {
+                        Toast.makeText(requireContext(), "Password is too short", Toast.LENGTH_SHORT).show();
+                    }
+
+                }
+            });
+        }
+    }
     private void Login(String email, String password) {
         firebaseAuth.signInWithEmailAndPassword(email, password).addOnSuccessListener(new OnSuccessListener<AuthResult>() {
             @Override
             public void onSuccess(AuthResult authResult) {
-                currentUser=firebaseAuth.getCurrentUser();
+                currentUser = firebaseAuth.getCurrentUser();
                 assert currentUser!=null;
                 final String currentUserId= currentUser.getUid();
                 if (currentUser != null && currentUser.isEmailVerified()){
@@ -143,13 +162,7 @@ public class LoginFragment extends Fragment {
                         if(!value.isEmpty()){
                             for(QueryDocumentSnapshot snapshot: value){
                                 if (isAdded() && getView() != null) {
-                                    CurrentUser CurrentUser = Util.CurrentUser.getInstance();
-                                    CurrentUser.setUserName(snapshot.getString("userName"));
-                                    CurrentUser.setUserSurname(snapshot.getString("userSurname"));
-                                    CurrentUser.setUserEmail(snapshot.getString("userEmail"));
-                                    CurrentUser.setUserClub(snapshot.getString("userClub"));
-                                    CurrentUser.setUserRole(snapshot.getString("userRole"));
-                                    CurrentUser.setUserId(snapshot.getString("UserId"));
+
                                     Navigation.findNavController(getView()).navigate(LoginFragmentDirections.actionLoginFragmentToClubFragment());
                                 }
                             }
