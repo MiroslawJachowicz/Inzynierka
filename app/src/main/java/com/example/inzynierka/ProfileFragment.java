@@ -80,7 +80,6 @@ public class ProfileFragment extends Fragment {
 
                     String name = documentSnapshot.getString("username");
                     String surname = documentSnapshot.getString("surname");
-                    String email = documentSnapshot.getString("email");
                     String club = documentSnapshot.getString("club");
                     String role = documentSnapshot.getString("role");
 
