@@ -96,7 +96,7 @@ public class SignupFragment extends Fragment {
                             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                                 if (task.isSuccessful()) {
                                     if (!task.getResult().isEmpty()) {
-                                        Toast.makeText(requireContext(), "E-mail already exists", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(requireContext(), "E-mail already exist", Toast.LENGTH_SHORT).show();
                                     }
                                 } else {
                                     Toast.makeText(requireContext(), "Something went wrong", Toast.LENGTH_SHORT).show();
@@ -164,37 +164,46 @@ public class SignupFragment extends Fragment {
         firebaseAuth.createUserWithEmailAndPassword(email,password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
-                if(task.isSuccessful()){
-                    currentUser=firebaseAuth.getCurrentUser();
-                    assert currentUser != null;
-                    final String currentUserId = currentUser.getUid();
-                    Map<String, Object> userObject = new HashMap<>();
-                    userObject.put("userId", currentUserId);
-                    userObject.put("username", name);
-                    userObject.put("surname", Surname);
-                    userObject.put("email", email);
-                    userObject.put("role", is_Trainer);
-                    userObject.put("club",club);
-                    ;
-                    collectionReference.add(userObject).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                        @Override
-                        public void onSuccess(DocumentReference documentReference) {
-                            documentReference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                                @Override
-                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                    if(task.getResult().exists()){
-                                        Toast.makeText(requireContext(), "Account have been created", Toast.LENGTH_SHORT).show();
-                                        Navigation.findNavController(signup_btn).navigate(SignupFragmentDirections.actionSignupFragmentToLoginFragment());
+                if (task.isSuccessful()) {
+                    currentUser = firebaseAuth.getCurrentUser();
+                    if (currentUser != null) {
+                        currentUser.sendEmailVerification()
+                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        if (task.isSuccessful()) {
+                                            Toast.makeText(requireContext(), "Verification email sent to " + currentUser.getEmail(), Toast.LENGTH_LONG).show();
+                                        }
                                     }
-                                }
-                            });
-                        }
-                    }).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Toast.makeText(requireContext(),"Something went wrong"+e,Toast.LENGTH_SHORT).show();
-                        }
-                    });
+                                });
+                        final String currentUserId = currentUser.getUid();
+                        Map<String, Object> userObject = new HashMap<>();
+                        userObject.put("userId", currentUserId);
+                        userObject.put("username", name);
+                        userObject.put("surname", Surname);
+                        userObject.put("email", email);
+                        userObject.put("role", is_Trainer);
+                        userObject.put("club", club);
+
+                        collectionReference.add(userObject).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                            @Override
+                            public void onSuccess(DocumentReference documentReference) {
+                                documentReference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                        if (task.getResult().exists()) {
+                                            Navigation.findNavController(signup_btn).navigate(SignupFragmentDirections.actionSignupFragmentToLoginFragment());
+                                        }
+                                    }
+                                });
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Toast.makeText(requireContext(), "Something went wrong" + e, Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
                 }
             }
         });

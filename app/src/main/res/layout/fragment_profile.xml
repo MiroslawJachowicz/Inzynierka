@@ -13,133 +13,314 @@
             android:orientation="horizontal"
             app:layout_constraintGuide_percent="0.30" />
 
-        <LinearLayout
-            android:id="@+id/linearLayout"
-            android:layout_width="match_parent"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="0dp"
             android:layout_height="0dp"
-            android:gravity="center"
-            android:orientation="vertical"
+            android:background="@drawable/profile_pitch"
             app:layout_constraintBottom_toTopOf="@+id/guideline"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/guideline"
             app:layout_constraintTop_toTopOf="parent">
 
                 <ImageView
-                    android:id="@+id/imageView7"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
+                    android:id="@+id/imageView"
+                    android:layout_width="0dp"
+                     android:layout_height="match_parent"
+                    android:background="@drawable/circle_image_template"
+                    android:clipToOutline="true"
+                    android:scaleType="centerCrop"
                     android:src="@drawable/person_icon"
-                    tools:ignore="ContentDescription" />
-        </LinearLayout>
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintDimensionRatio="1:1"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
         <ScrollView
+            android:id="@+id/scrollView2"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/linearLayout"
-            >
+            app:layout_constraintTop_toTopOf="@+id/guideline">
+
+                <LinearLayout
+                    android:layout_marginTop="10dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_gravity="center"
+                    >
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:layout_marginLeft="15dp"
+                            android:layout_marginRight="15dp"
+                            android:layout_marginTop="15dp"
+                            android:layout_marginBottom="15dp"
+                            android:background="@drawable/rectangle_text_template">
+
+                                <TextView
+                                    android:id="@+id/textView15"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/profile_name"
+                                    android:layout_marginStart="20dp"
+                                    android:textSize="15sp" />
+
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="horizontal"
+                                    android:gravity="center">
+
+                                        <TextView
+                                            android:id="@+id/textViewProfileName"
+                                            android:layout_width="0dp"
+                                            android:layout_height="wrap_content"
+                                            android:layout_weight="1"
+                                            android:textSize="25sp"
+                                            android:gravity="center"
+                                            android:layout_marginStart="20dp"
+                                            android:layout_marginEnd="10dp"
+                                            android:layout_marginBottom="5dp" />
+
+                                        <ImageView
+                                            android:id="@+id/imageViewEditName"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:src="@drawable/edit_icon"
+                                            android:layout_marginEnd="20dp" />
+                                        <EditText
+                                            android:id="@+id/editTextProfileName"
+                                            android:layout_width="0dp"
+                                            android:layout_height="wrap_content"
+                                            android:layout_weight="1"
+                                            android:visibility="gone"
+                                            android:layout_marginStart="20dp"
+                                            android:layout_marginEnd="10dp"
+                                            android:layout_marginBottom="5dp"/>
+                                        <ImageView
+                                            android:id="@+id/imageViewDoneName"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:visibility="gone"
+                                            android:src="@drawable/done_icon"
+                                            android:padding="5dp"/>
+                                        <ImageView
+                                            android:id="@+id/imageViewCancelName"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:visibility="gone"
+                                            android:src="@drawable/cancel_icon"
+                                            android:padding="5dp"/>
+                                </LinearLayout>
+
+                        </LinearLayout>
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:gravity="center">
-
-                        <TextView
-                            android:id="@+id/textView15"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="@string/profile_name"
-                            android:textSize="15sp"
-                            android:layout_marginBottom="20dp"
-                            />
-
-                        <TextView
-                            android:id="@+id/textViewProfileName"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:textSize="30sp"
-                            android:layout_marginBottom="20dp"
-                            />
-
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginRight="15dp"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginBottom="15dp"
+                    android:background="@drawable/rectangle_text_template">
                         <TextView
                             android:id="@+id/textView17"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:layout_marginStart="20dp"
                             android:text="@string/profile_surname"
-                            android:textSize="15sp"
-                            android:layout_marginBottom="20dp"
-                            />
-
-                        <TextView
-                            android:id="@+id/textViewProfileSurname"
+                            android:textSize="15sp" />
+                        <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:textSize="30sp"
-                            android:layout_marginBottom="20dp"
-                            />
+                            android:orientation="horizontal"
+                            android:gravity="center">
 
-                        <TextView
-                            android:id="@+id/textView19"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="@string/profile_email"
-                            android:textSize="15sp"
-                            android:layout_marginBottom="20dp"
-                            />
-
-                        <TextView
-                            android:id="@+id/textViewProfileEmail"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:textSize="30sp"
-                            android:layout_marginBottom="20dp"
-                            />
-
+                                <TextView
+                                    android:id="@+id/textViewProfileSurname"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:textSize="25sp"
+                                    android:gravity="center"
+                                    android:layout_marginStart="20dp"
+                                    android:layout_marginEnd="10dp"
+                                    android:layout_marginBottom="5dp"
+                                    />
+                                <ImageView
+                                    android:id="@+id/imageViewEditSurname"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:src="@drawable/edit_icon"
+                                    android:layout_marginEnd="20dp" />
+                                <EditText
+                                    android:id="@+id/editTextProfileSurname"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:visibility="gone"
+                                    android:layout_marginStart="20dp"
+                                    android:layout_marginEnd="10dp"
+                                    android:layout_marginBottom="5dp"/>
+                                <ImageView
+                                    android:id="@+id/imageViewDoneSurname"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:visibility="gone"
+                                    android:src="@drawable/done_icon"
+                                    android:padding="5dp"/>
+                                <ImageView
+                                    android:id="@+id/imageViewCancelSurname"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:visibility="gone"
+                                    android:src="@drawable/cancel_icon"
+                                    android:padding="5dp"/>
+                        </LinearLayout>
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginRight="15dp"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginBottom="15dp"
+                    android:background="@drawable/rectangle_text_template">
                         <TextView
                             android:id="@+id/textView21"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="@string/profile_role"
-                            android:textSize="15sp"
-                            android:layout_marginBottom="20dp"
-                            />
-
-                        <TextView
-                            android:id="@+id/textViewProfileRole"
+                            android:layout_marginStart="20dp"
+                            android:textSize="15sp" />
+                        <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:textSize="30sp"
-                            android:layout_marginBottom="20dp"
-                            />
-
+                            android:orientation="horizontal"
+                            android:gravity="center">
+                                <TextView
+                                    android:id="@+id/textViewProfileRole"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:textSize="25sp"
+                                    android:gravity="center"
+                                    android:layout_marginStart="20dp"
+                                    android:layout_marginEnd="10dp"
+                                    android:layout_marginBottom="5dp"
+                                    />
+                                <ImageView
+                                    android:id="@+id/imageViewEditRole"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:src="@drawable/edit_icon"
+                                    android:layout_marginEnd="20dp" />
+                                <EditText
+                                    android:id="@+id/editTextProfileRole"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:visibility="gone"
+                                    android:layout_marginStart="20dp"
+                                    android:layout_marginEnd="10dp"
+                                    android:layout_marginBottom="5dp"/>
+                                <ImageView
+                                    android:id="@+id/imageViewDoneRole"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:visibility="gone"
+                                    android:src="@drawable/done_icon"
+                                    android:padding="5dp"/>
+                                <ImageView
+                                    android:id="@+id/imageViewCancelRole"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:visibility="gone"
+                                    android:src="@drawable/cancel_icon"
+                                    android:padding="5dp"/>
+                        </LinearLayout>
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginRight="15dp"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginBottom="15dp"
+                    android:background="@drawable/rectangle_text_template">
                         <TextView
                             android:id="@+id/textView23"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="@string/profile_club"
-                            android:textSize="15sp"
-                            android:layout_marginBottom="20dp"
-                            />
-
-                        <TextView
-                            android:id="@+id/textViewProfileClub"
+                            android:layout_marginStart="20dp"
+                            android:textSize="15sp" />
+                        <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:textSize="30sp"
-                            android:layout_marginBottom="20dp"
-                            />
-
+                            android:orientation="horizontal"
+                            android:gravity="center">
+                                <TextView
+                                    android:id="@+id/textViewProfileClub"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:textSize="25sp"
+                                    android:gravity="center"
+                                    android:layout_marginStart="20dp"
+                                    android:layout_marginEnd="10dp"
+                                    android:layout_marginBottom="5dp"/>
+                                <ImageView
+                                    android:id="@+id/imageViewEditClub"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:src="@drawable/edit_icon"
+                                    android:layout_marginEnd="20dp" />
+                                <EditText
+                                    android:id="@+id/editTextProfileClub"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:visibility="gone"
+                                    android:layout_marginStart="20dp"
+                                    android:layout_marginEnd="10dp"
+                                    android:layout_marginBottom="5dp"/>
+                                <ImageView
+                                    android:id="@+id/imageViewDoneClub"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:visibility="gone"
+                                    android:src="@drawable/done_icon"
+                                    android:padding="5dp"/>
+                                <ImageView
+                                    android:id="@+id/imageViewCancelClub"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:visibility="gone"
+                                    android:src="@drawable/cancel_icon"
+                                    android:padding="5dp"/>
+                        </LinearLayout>
+                </LinearLayout>
                         <Button
                             android:id="@+id/profile_logout_button"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="@string/profile_logout"
                             android:layout_marginLeft="20dp"
                             android:layout_marginRight="20dp"
-                            android:layout_marginBottom="20dp"
-                            />
+                            android:layout_marginBottom="15dp"
+                            android:layout_marginTop="15dp"
+                            android:text="@string/profile_logout" />
                 </LinearLayout>
         </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>

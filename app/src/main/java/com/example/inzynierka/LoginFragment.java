@@ -132,7 +132,7 @@ public class LoginFragment extends Fragment {
                 currentUser=firebaseAuth.getCurrentUser();
                 assert currentUser!=null;
                 final String currentUserId= currentUser.getUid();
-
+                if (currentUser != null && currentUser.isEmailVerified()){
                 collectionReference.whereEqualTo("userId",currentUserId).addSnapshotListener(new EventListener<QuerySnapshot>() {
                     @Override
                     public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
@@ -142,22 +142,25 @@ public class LoginFragment extends Fragment {
                         assert value!=null;
                         if(!value.isEmpty()){
                             for(QueryDocumentSnapshot snapshot: value){
-                                CurrentUser CurrentUser = Util.CurrentUser.getInstance();
-                                CurrentUser.setUserName(snapshot.getString("userName"));
-                                CurrentUser.setUserSurname(snapshot.getString("userSurname"));
-                                CurrentUser.setUserEmail(snapshot.getString("userEmail"));
-                                CurrentUser.setUserClub(snapshot.getString("userClub"));
-                                CurrentUser.setUserRole(snapshot.getString("userRole"));
-                                CurrentUser.setUserId(snapshot.getString("UserId"));
-
-                                Navigation.findNavController(login_btn).navigate(LoginFragmentDirections.actionLoginFragmentToClubFragment());
-
+                                if (isAdded() && getView() != null) {
+                                    CurrentUser CurrentUser = Util.CurrentUser.getInstance();
+                                    CurrentUser.setUserName(snapshot.getString("userName"));
+                                    CurrentUser.setUserSurname(snapshot.getString("userSurname"));
+                                    CurrentUser.setUserEmail(snapshot.getString("userEmail"));
+                                    CurrentUser.setUserClub(snapshot.getString("userClub"));
+                                    CurrentUser.setUserRole(snapshot.getString("userRole"));
+                                    CurrentUser.setUserId(snapshot.getString("UserId"));
+                                    Navigation.findNavController(getView()).navigate(LoginFragmentDirections.actionLoginFragmentToClubFragment());
+                                }
                             }
                         }
 
 
                     }
                 });
+            }else{
+                    Toast.makeText(requireContext(), "Verify your email address", Toast.LENGTH_SHORT).show();
+                }
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
@@ -166,7 +169,6 @@ public class LoginFragment extends Fragment {
             }
         });
     }
-
 }
 
 
