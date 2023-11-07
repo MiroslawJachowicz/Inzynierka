@@ -77,20 +77,8 @@
                         android:layout_marginLeft="20dp"
                         android:layout_marginRight="20dp"
                         android:layout_marginBottom="20dp"
-                        android:layout_toEndOf="@+id/checkBoxRememberMe"
                         android:gravity="end"
                         android:text="@string/i_forgot_my_password" />
-
-                    <CheckBox
-                        android:id="@+id/checkBoxRememberMe"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/remember_me"
-                        android:layout_marginLeft="20dp"
-                        android:layout_marginRight="20dp"
-                        android:layout_marginBottom="20dp"
-                        android:gravity="center"
-                        android:layout_centerVertical="true"/>
                 </RelativeLayout>
 
                 <Button

@@ -1,64 +1,108 @@
 package com.example.inzynierka;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link MemberFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+
+
 public class MemberFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
-    public MemberFragment() {
-        // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment MemberFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static MemberFragment newInstance(String param1, String param2) {
-        MemberFragment fragment = new MemberFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-    }
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+    private LinearLayout memberLinearLayout;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_member, container, false);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        memberLinearLayout = view.findViewById(R.id.linearLayoutMembers);
+
+        getCurrentMemberClub();
+    }
+
+    private void getCurrentMemberClub() {
+        FirebaseUser currentUser = firebaseAuth.getCurrentUser();
+
+        if (currentUser != null) {
+            String currentUserId = currentUser.getUid();
+
+            // Załóżmy, że mamy kolekcję o nazwie 'Users', gdzie każdy dokument ma pole 'userId'
+            db.collection("Users")
+                    .whereEqualTo("userId", currentUserId)
+                    .limit(1)
+                    .get()
+                    .addOnSuccessListener(queryDocumentSnapshots -> {
+                        if (!queryDocumentSnapshots.isEmpty()) {
+                            // Pobieramy pierwszy (i jedyny) dokument w wyniku zapytania
+                            DocumentSnapshot documentSnapshot = queryDocumentSnapshots.getDocuments().get(0);
+                            String userClub = documentSnapshot.getString("club");
+                            if (userClub != null) {
+                                loadUsersFromSameClub(userClub);
+                            }
+                        }
+                    })
+                    .addOnFailureListener(e -> {
+                        // Handle the error
+                    });
+        }
+    }
+
+    private void loadUsersFromSameClub(String userClub) {
+        db.collection("Users")
+                .whereEqualTo("club", userClub)
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            String name = document.getString("username");
+                            String surname = document.getString("surname");
+                            String role = document.getString("role");
+                            addUserToScrollView(name, surname, role);
+                        }
+                    } else {
+                        // Handle the error
+                    }
+                });
+    }
+
+    @SuppressLint("SetTextI18n")
+    private void addUserToScrollView(String name, String surname, String role) {
+        // Inflate the custom layout for each user item
+        LayoutInflater inflater = LayoutInflater.from(getContext());
+        View userLayout = inflater.inflate(R.layout.member_layout, memberLinearLayout, false);
+
+        // Find the views inside the inflated layout
+        ImageView imageView = userLayout.findViewById(R.id.imageViewMember);
+        TextView textViewName = userLayout.findViewById(R.id.textViewMemberNameSurname);
+        TextView textViewRole = userLayout.findViewById(R.id.textViewMemberRole);
+
+        // Assuming you have a drawable resource named 'person_icon'
+        imageView.setImageResource(R.drawable.person_icon);
+        textViewName.setText(name+" "+surname);
+        textViewRole.setText(role);
+
+        // Add the inflated layout to the memberLinearLayout
+        memberLinearLayout.addView(userLayout);
     }
 }

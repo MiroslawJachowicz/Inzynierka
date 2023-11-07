@@ -1,15 +1,11 @@
 package com.example.inzynierka;
 
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -39,7 +35,6 @@ public class LoginFragment extends Fragment {
     Button login_btn;
     TextView textViewsignup;
     TextView textViewforgottenpassword;
-    CheckBox remerberme_checkbox;
 
     private FirebaseAuth firebaseAuth;
     private FirebaseUser currentUser;
@@ -58,29 +53,8 @@ public class LoginFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        remerberme_checkbox = view.findViewById(R.id.checkBoxRememberMe);
-        remerberme_checkbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                SharedPreferences sharedPreferences = requireActivity().getPreferences(Context.MODE_PRIVATE);
-                SharedPreferences.Editor editor = sharedPreferences.edit();
-                editor.putBoolean("Remember me", isChecked);
-                editor.apply();
-            }
-        });
-
-        boolean isRememberMeChecked = requireActivity().getPreferences(Context.MODE_PRIVATE)
-                .getBoolean("REMEMBER_ME", false);
-        remerberme_checkbox.setChecked(isRememberMeChecked);
-
         firebaseAuth = FirebaseAuth.getInstance();
         currentUser = firebaseAuth.getCurrentUser();
-
-        if (currentUser != null && isRememberMeChecked) {
-
-            Navigation.findNavController(view).navigate(LoginFragmentDirections.actionLoginFragmentToClubFragment());
-
-        } else {
 
             textViewsignup = requireView().findViewById(R.id.sign_up_TextView);
             textViewsignup.setOnClickListener(new View.OnClickListener() {
@@ -143,7 +117,6 @@ public class LoginFragment extends Fragment {
                 }
             });
         }
-    }
     private void Login(String email, String password) {
         firebaseAuth.signInWithEmailAndPassword(email, password).addOnSuccessListener(new OnSuccessListener<AuthResult>() {
             @Override
