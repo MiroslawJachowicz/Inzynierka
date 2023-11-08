@@ -1,5 +1,8 @@
 package com.example.inzynierka;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -53,31 +56,35 @@ public class ForgottenPasswordFragment extends Fragment {
             public void onClick(View v) {
                 String email=editTextTextEmailAddress.getText().toString().trim();
                 if (!TextUtils.isEmpty(email)) {
-                    collectionReference.whereEqualTo("email", editTextTextEmailAddress.getText().toString())
-                            .get()
-                            .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                @Override
-                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                    if (task.isSuccessful()) {
-                                        if (!task.getResult().isEmpty()) {
-                                            firebaseAuth.sendPasswordResetEmail(email).addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                @Override
-                                                public void onSuccess(Void unused) {
-                                                    Toast.makeText(requireContext(), "Reset password link has been sent", Toast.LENGTH_SHORT).show();
-                                                    Navigation.findNavController(v).navigate(ForgottenPasswordFragmentDirections.actionForgottenPasswordFragmentToLoginFragment());
-                                                }
-                                            }).addOnFailureListener(new OnFailureListener() {
-                                                @Override
-                                                public void onFailure(@NonNull Exception e) {
-                                                    Toast.makeText(requireContext(), "Something went wrong", Toast.LENGTH_SHORT).show();
-                                                }
-                                            });
-                                        }else {
-                                            Toast.makeText(requireContext(), "E-mail is not assigned to any account", Toast.LENGTH_SHORT).show();
+                    if (isConnectedToInternet(requireContext())) {
+                        collectionReference.whereEqualTo("email", editTextTextEmailAddress.getText().toString())
+                                .get()
+                                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                        if (task.isSuccessful()) {
+                                            if (!task.getResult().isEmpty()) {
+                                                firebaseAuth.sendPasswordResetEmail(email).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void unused) {
+                                                        Toast.makeText(requireContext(), "Reset password link has been sent", Toast.LENGTH_SHORT).show();
+                                                        Navigation.findNavController(v).navigate(ForgottenPasswordFragmentDirections.actionForgottenPasswordFragmentToLoginFragment());
+                                                    }
+                                                }).addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Toast.makeText(requireContext(), "Something went wrong", Toast.LENGTH_SHORT).show();
+                                                    }
+                                                });
+                                            } else {
+                                                Toast.makeText(requireContext(), "E-mail is not assigned to any account", Toast.LENGTH_SHORT).show();
+                                            }
                                         }
                                     }
-                                }
-                            });
+                                });
+                    }else{
+                        Toast.makeText(requireContext(), "No internet connection", Toast.LENGTH_SHORT).show();
+                    }
                 } else {
                     Toast.makeText(requireContext(), "E-mail field is empty", Toast.LENGTH_SHORT).show();
                 }
@@ -90,5 +97,13 @@ public class ForgottenPasswordFragment extends Fragment {
                 Navigation.findNavController(v).navigate(ForgottenPasswordFragmentDirections.actionForgottenPasswordFragmentToLoginFragment());
             }
         });
+    }
+    public boolean isConnectedToInternet(Context context) {
+        ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (connectivityManager != null) {
+            NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+            return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+        }
+        return false;
     }
 }

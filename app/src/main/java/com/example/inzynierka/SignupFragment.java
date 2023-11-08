@@ -1,5 +1,9 @@
 package com.example.inzynierka;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -89,62 +93,66 @@ public class SignupFragment extends Fragment {
 
             @Override
             public void onClick(View v) {
-                collectionReference.whereEqualTo("email", editText_TextEmailAddress.getText().toString())
-                        .get()
-                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                            @Override
-                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                if (task.isSuccessful()) {
-                                    if (!task.getResult().isEmpty()) {
-                                        Toast.makeText(requireContext(), "E-mail already exist", Toast.LENGTH_SHORT).show();
+                if (isConnectedToInternet(requireContext())) {
+                    collectionReference.whereEqualTo("email", editText_TextEmailAddress.getText().toString())
+                            .get()
+                            .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                @Override
+                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                    if (task.isSuccessful()) {
+                                        if (!task.getResult().isEmpty()) {
+                                            Toast.makeText(requireContext(), "E-mail already exist", Toast.LENGTH_SHORT).show();
+                                        }
+                                    } else {
+                                        Toast.makeText(requireContext(), "Something went wrong", Toast.LENGTH_SHORT).show();
                                     }
-                                } else {
-                                    Toast.makeText(requireContext(), "Something went wrong", Toast.LENGTH_SHORT).show();
                                 }
-                            }
-                        });
+                            });
 
-                if(!TextUtils.isEmpty(edit_Text_Name.getText().toString())
-                        && !TextUtils.isEmpty(edit_Text_Surname.getText().toString())
-                        && !TextUtils.isEmpty(editText_TextEmailAddress.getText().toString())
-                        && !TextUtils.isEmpty(editText_Password.getText().toString())
-                        && !TextUtils.isEmpty(editText_ConfirmPassword.getText().toString())
-                        && !TextUtils.isEmpty(clubselect.getText().toString())
-                        && TextUtils.equals(editText_Password.getText().toString(), editText_ConfirmPassword.getText().toString())
-                        && editText_Password.length()>=6
-                        && editText_ConfirmPassword.length()>=6
-                        && android.util.Patterns.EMAIL_ADDRESS.matcher(editText_TextEmailAddress.getText().toString().trim()).matches()
-                ) {
-                    String name = edit_Text_Name.getText().toString().trim();
-                    String Surname = edit_Text_Surname.getText().toString().trim();
-                    String email = editText_TextEmailAddress.getText().toString().trim();
-                    String password = editText_Password.getText().toString().trim();
-                    String club = clubselect.getText().toString().trim();
-                    String is_Trainer;
-                    if (Trainer_CheckBox.isChecked()) {
-                        is_Trainer = "Trainer";
-                    } else {
-                        is_Trainer = "Player";
+                    if (!TextUtils.isEmpty(edit_Text_Name.getText().toString())
+                            && !TextUtils.isEmpty(edit_Text_Surname.getText().toString())
+                            && !TextUtils.isEmpty(editText_TextEmailAddress.getText().toString())
+                            && !TextUtils.isEmpty(editText_Password.getText().toString())
+                            && !TextUtils.isEmpty(editText_ConfirmPassword.getText().toString())
+                            && !TextUtils.isEmpty(clubselect.getText().toString())
+                            && TextUtils.equals(editText_Password.getText().toString(), editText_ConfirmPassword.getText().toString())
+                            && editText_Password.length() >= 6
+                            && editText_ConfirmPassword.length() >= 6
+                            && android.util.Patterns.EMAIL_ADDRESS.matcher(editText_TextEmailAddress.getText().toString().trim()).matches()
+                    ) {
+                        String name = edit_Text_Name.getText().toString().trim();
+                        String Surname = edit_Text_Surname.getText().toString().trim();
+                        String email = editText_TextEmailAddress.getText().toString().trim();
+                        String password = editText_Password.getText().toString().trim();
+                        String club = clubselect.getText().toString().trim();
+                        String is_Trainer;
+                        if (Trainer_CheckBox.isChecked()) {
+                            is_Trainer = "Trainer";
+                        } else {
+                            is_Trainer = "Player";
+                        }
+                        CreateAccount(name, Surname, email, password, club, is_Trainer);
+                    } else if (TextUtils.isEmpty(edit_Text_Name.getText().toString())) {
+                        Toast.makeText(requireContext(), "Name field is empty", Toast.LENGTH_SHORT).show();
+                    } else if (TextUtils.isEmpty(edit_Text_Surname.getText().toString())) {
+                        Toast.makeText(requireContext(), "Surname field is empty", Toast.LENGTH_SHORT).show();
+                    } else if (TextUtils.isEmpty(editText_TextEmailAddress.getText().toString())) {
+                        Toast.makeText(requireContext(), "E-mail field is empty", Toast.LENGTH_SHORT).show();
+                    } else if (TextUtils.isEmpty(clubselect.getText().toString())) {
+                        Toast.makeText(requireContext(), "Club field is empty", Toast.LENGTH_SHORT).show();
+                    } else if (TextUtils.isEmpty(editText_Password.getText().toString())) {
+                        Toast.makeText(requireContext(), "Password field is empty", Toast.LENGTH_SHORT).show();
+                    } else if (TextUtils.isEmpty(editText_ConfirmPassword.getText().toString())) {
+                        Toast.makeText(requireContext(), "Confirm Password field is empty", Toast.LENGTH_SHORT).show();
+                    } else if (!TextUtils.equals(editText_Password.getText().toString(), editText_ConfirmPassword.getText().toString())) {
+                        Toast.makeText(requireContext(), "Passwords aren't the same", Toast.LENGTH_SHORT).show();
+                    } else if (editText_Password.length() < 6 || editText_ConfirmPassword.length() < 6) {
+                        Toast.makeText(requireContext(), "Password is too short", Toast.LENGTH_SHORT).show();
+                    } else if (!android.util.Patterns.EMAIL_ADDRESS.matcher(editText_TextEmailAddress.getText().toString().trim()).matches()) {
+                        Toast.makeText(requireContext(), "Please enter a email address", Toast.LENGTH_SHORT).show();
                     }
-                    CreateAccount(name, Surname, email, password, club,is_Trainer);
-                }else if(TextUtils.isEmpty(edit_Text_Name.getText().toString())){
-                    Toast.makeText(requireContext(),"Name field is empty",Toast.LENGTH_SHORT).show();
-                }else if(TextUtils.isEmpty(edit_Text_Surname.getText().toString())){
-                    Toast.makeText(requireContext(),"Surname field is empty",Toast.LENGTH_SHORT).show();
-                }else if(TextUtils.isEmpty(editText_TextEmailAddress.getText().toString())){
-                    Toast.makeText(requireContext(),"E-mail field is empty",Toast.LENGTH_SHORT).show();
-                } else if (TextUtils.isEmpty(clubselect.getText().toString())) {
-                    Toast.makeText(requireContext(),"Club field is empty",Toast.LENGTH_SHORT).show();
-                } else if(TextUtils.isEmpty(editText_Password.getText().toString())){
-                    Toast.makeText(requireContext(),"Password field is empty",Toast.LENGTH_SHORT).show();
-                }else if(TextUtils.isEmpty(editText_ConfirmPassword.getText().toString())) {
-                    Toast.makeText(requireContext(), "Confirm Password field is empty", Toast.LENGTH_SHORT).show();
-                }else if (!TextUtils.equals(editText_Password.getText().toString(), editText_ConfirmPassword.getText().toString())) {
-                    Toast.makeText(requireContext(),"Passwords aren't the same",Toast.LENGTH_SHORT).show();
-                }else if(editText_Password.length()<6 || editText_ConfirmPassword.length()<6){
-                    Toast.makeText(requireContext(),"Password is too short",Toast.LENGTH_SHORT).show();
-                }else if(!android.util.Patterns.EMAIL_ADDRESS.matcher(editText_TextEmailAddress.getText().toString().trim()).matches()){
-                    Toast.makeText(requireContext(),"Please enter a email address",Toast.LENGTH_SHORT).show();
+                }else{
+                    Toast.makeText(requireContext(), "No internet connection", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -192,6 +200,10 @@ public class SignupFragment extends Fragment {
                                     @Override
                                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                                         if (task.getResult().exists()) {
+                                            SharedPreferences sharedPreferences = requireActivity().getPreferences(Context.MODE_PRIVATE);
+                                            SharedPreferences.Editor editor = sharedPreferences.edit();
+                                            editor.putBoolean("RememberMe", false);
+                                            editor.apply();
                                             Navigation.findNavController(signup_btn).navigate(SignupFragmentDirections.actionSignupFragmentToLoginFragment());
                                         }
                                     }
@@ -208,11 +220,18 @@ public class SignupFragment extends Fragment {
             }
         });
     }
-
     @Override
     public void onStart() {
         super.onStart();
         currentUser=firebaseAuth.getCurrentUser();
         firebaseAuth.addAuthStateListener(authStateListener);
+    }
+    public boolean isConnectedToInternet(Context context) {
+        ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (connectivityManager != null) {
+            NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+            return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+        }
+        return false;
     }
 }

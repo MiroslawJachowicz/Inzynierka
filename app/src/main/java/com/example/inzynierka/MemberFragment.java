@@ -22,7 +22,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 public class MemberFragment extends Fragment {
 
-    private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private FirebaseFirestore Firebasedb = FirebaseFirestore.getInstance();
     private FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
     private LinearLayout memberLinearLayout;
 
@@ -47,29 +47,26 @@ public class MemberFragment extends Fragment {
         if (currentUser != null) {
             String currentUserId = currentUser.getUid();
 
-            // Załóżmy, że mamy kolekcję o nazwie 'Users', gdzie każdy dokument ma pole 'userId'
-            db.collection("Users")
+            Firebasedb.collection("Users")
                     .whereEqualTo("userId", currentUserId)
                     .limit(1)
                     .get()
                     .addOnSuccessListener(queryDocumentSnapshots -> {
-                        if (!queryDocumentSnapshots.isEmpty()) {
-                            // Pobieramy pierwszy (i jedyny) dokument w wyniku zapytania
-                            DocumentSnapshot documentSnapshot = queryDocumentSnapshots.getDocuments().get(0);
-                            String userClub = documentSnapshot.getString("club");
-                            if (userClub != null) {
-                                loadUsersFromSameClub(userClub);
+                            if (!queryDocumentSnapshots.isEmpty()) {
+                                DocumentSnapshot documentSnapshot = queryDocumentSnapshots.getDocuments().get(0);
+                                String userClub = documentSnapshot.getString("club");
+                                if (userClub != null) {
+                                    loadUsersFromSameClub(userClub);
+                                }
                             }
-                        }
                     })
                     .addOnFailureListener(e -> {
-                        // Handle the error
                     });
+
         }
     }
-
     private void loadUsersFromSameClub(String userClub) {
-        db.collection("Users")
+        Firebasedb.collection("Users")
                 .whereEqualTo("club", userClub)
                 .get()
                 .addOnCompleteListener(task -> {
@@ -80,29 +77,26 @@ public class MemberFragment extends Fragment {
                             String role = document.getString("role");
                             addUserToScrollView(name, surname, role);
                         }
-                    } else {
-                        // Handle the error
                     }
                 });
     }
 
     @SuppressLint("SetTextI18n")
     private void addUserToScrollView(String name, String surname, String role) {
-        // Inflate the custom layout for each user item
-        LayoutInflater inflater = LayoutInflater.from(getContext());
-        View userLayout = inflater.inflate(R.layout.member_layout, memberLinearLayout, false);
 
-        // Find the views inside the inflated layout
-        ImageView imageView = userLayout.findViewById(R.id.imageViewMember);
-        TextView textViewName = userLayout.findViewById(R.id.textViewMemberNameSurname);
-        TextView textViewRole = userLayout.findViewById(R.id.textViewMemberRole);
+        if(isAdded()) {
+            LayoutInflater inflater = LayoutInflater.from(getContext());
+            View userLayout = inflater.inflate(R.layout.member_layout, memberLinearLayout, false);
 
-        // Assuming you have a drawable resource named 'person_icon'
-        imageView.setImageResource(R.drawable.person_icon);
-        textViewName.setText(name+" "+surname);
-        textViewRole.setText(role);
+            ImageView imageView = userLayout.findViewById(R.id.imageViewMember);
+            TextView textViewName = userLayout.findViewById(R.id.textViewMemberNameSurname);
+            TextView textViewRole = userLayout.findViewById(R.id.textViewMemberRole);
 
-        // Add the inflated layout to the memberLinearLayout
-        memberLinearLayout.addView(userLayout);
+            imageView.setImageResource(R.drawable.person_icon);
+            textViewName.setText(name + " " + surname);
+            textViewRole.setText(role);
+
+            memberLinearLayout.addView(userLayout);
+        }
     }
 }
