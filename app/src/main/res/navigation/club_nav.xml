@@ -11,11 +11,6 @@
         android:label="fragment_profile"
         tools:layout="@layout/fragment_profile" />
     <fragment
-        android:id="@+id/calendarFragment"
-        android:name="com.example.inzynierka.CalendarFragment"
-        android:label="fragment_calendar"
-        tools:layout="@layout/fragment_calendar" />
-    <fragment
         android:id="@+id/exerciseFragment"
         android:name="com.example.inzynierka.ExerciseFragment"
         android:label="fragment_exercise"
@@ -30,4 +25,9 @@
         android:name="com.example.inzynierka.MemberFragment"
         android:label="fragment_member"
         tools:layout="@layout/fragment_member" />
+    <fragment
+        android:id="@+id/trainingPlanFragment"
+        android:name="com.example.inzynierka.TrainingPlanFragment"
+        android:label="fragment_trainingplan"
+        tools:layout="@layout/fragment_trainingplan" />
 </navigation>

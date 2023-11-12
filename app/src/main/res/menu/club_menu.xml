@@ -5,27 +5,27 @@
 
     <item
         android:id="@+id/memberFragment"
-        android:title="members"
+        android:title="@string/members"
         android:icon="@drawable/club_icon"
         />
     <item
         android:id="@+id/exerciseFragment"
-        android:title="exercises"
+        android:title="@string/exercises"
         android:icon="@drawable/sport_icon"
         />
     <item
         android:id="@+id/calendarFragment"
-        android:title="calendar"
-        android:icon="@drawable/calendar_icon"
+        android:title="@string/training_plan"
+        android:icon="@drawable/trainingplan_icon"
         />
     <item
         android:id="@+id/squadFragment"
-        android:title="squad"
+        android:title="@string/squad"
         android:icon="@drawable/team_icon"
         />
     <item
         android:id="@+id/profileFragment"
-        android:title="profile"
+        android:title="@string/profile"
         android:icon="@drawable/person_icon"
         />
 </menu>

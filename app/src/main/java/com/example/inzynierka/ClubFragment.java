@@ -19,7 +19,6 @@ public class ClubFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_club, container, false);
     }
 
@@ -46,7 +45,7 @@ public class ClubFragment extends Fragment {
                 } else if (itemId == R.id.calendarFragment) {
                     getChildFragmentManager()
                             .beginTransaction()
-                            .replace(R.id.fragmentContainerView, new CalendarFragment())
+                            .replace(R.id.fragmentContainerView, new TrainingPlanFragment())
                             .commit();
                     return true;
                 } else if (itemId == R.id.squadFragment) {

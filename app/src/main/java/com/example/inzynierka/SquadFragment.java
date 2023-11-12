@@ -1,6 +1,9 @@
 package com.example.inzynierka;
 
 import android.app.AlertDialog;
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -88,18 +91,21 @@ public class SquadFragment extends Fragment {
             }
         }
         CharSequence[] playerItems = filteredPlayerNames.toArray(new CharSequence[0]);
-
+        if (isConnectedToInternet(requireContext())) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle("Choose a player to add")
                 .setItems(playerItems, (dialog, which) -> {
-                    String selectedPlayerName = filteredPlayerNames.get(which);
-                    addUserToSquad(selectedPlayerName, squadIndex);
-                    addedPlayers.add(selectedPlayerName);
-                    saveSquadToFirebase(selectedPlayerName, squadIndex, userClub);
+                        String selectedPlayerName = filteredPlayerNames.get(which);
+                        addUserToSquad(selectedPlayerName, squadIndex);
+                        addedPlayers.add(selectedPlayerName);
+                        saveSquadToFirebase(selectedPlayerName, squadIndex, userClub);
                 });
 
         AlertDialog dialog = builder.create();
         dialog.show();
+        }else {
+            Toast.makeText(requireContext(), "No internet connection", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void getPlayersFromSameClub(String userClub, FirebaseCallback callback) {
@@ -220,7 +226,7 @@ public class SquadFragment extends Fragment {
                                             getPlayersFromSameClub(userClub, playerNames -> AddPlayertoSquad(playerNames, index, userClub));
                                         }
                                     } else {
-                                        Toast.makeText(getActivity(), "You  cant change squad,  because you are not trainer", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(getActivity(), "You  can't change squad, because you are not trainer", Toast.LENGTH_SHORT).show();
                                     }
                                 }
                             }).addOnFailureListener(new OnFailureListener() {
@@ -248,17 +254,21 @@ public class SquadFragment extends Fragment {
                                         String userRole = documentSnapshot.getString("role");
                                         if (Objects.equals(userRole, "Trainer")) {
                                             if (userClub != null) {
-                                                String playerName = textViewPlayerName.getText().toString();
-                                                removePlayerFromSquad(playerName, index, userClub);
-                                                textViewPlayerName.setVisibility(View.GONE);
-                                                imageViewCancelSquad.setVisibility(View.GONE);
-                                                textViewPlayer.setVisibility(View.VISIBLE);
-                                                imageViewPersonSquad.setVisibility(View.GONE);
-                                                imageViewSquadIcon.setVisibility(View.VISIBLE);
-                                                addedPlayers.remove(playerName);
+                                                if (isConnectedToInternet(requireContext())) {
+                                                    String playerName = textViewPlayerName.getText().toString();
+                                                    removePlayerFromSquad(playerName, index, userClub);
+                                                    textViewPlayerName.setVisibility(View.GONE);
+                                                    imageViewCancelSquad.setVisibility(View.GONE);
+                                                    textViewPlayer.setVisibility(View.VISIBLE);
+                                                    imageViewPersonSquad.setVisibility(View.GONE);
+                                                    imageViewSquadIcon.setVisibility(View.VISIBLE);
+                                                    addedPlayers.remove(playerName);
+                                                }else{
+                                                    Toast.makeText(requireContext(), "No internet connection", Toast.LENGTH_SHORT).show();
+                                                }
                                             }
                                         } else {
-                                            Toast.makeText(getActivity(), "You  cant change squad,  because you are not trainer", Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(getActivity(), "You  can't change squad,  because you are not trainer", Toast.LENGTH_SHORT).show();
                                         }
                                     }
                                 });
@@ -273,8 +283,16 @@ public class SquadFragment extends Fragment {
 
         Firebasedb.collection("Squad").document(userClub)
                 .update(playerField, null)
-                .addOnSuccessListener(aVoid -> Log.d("SquadState", "Player removed from squad successfully"))
-                .addOnFailureListener(e -> Log.w("SquadState", "Error removing player from squad", e));
+                .addOnSuccessListener(aVoid -> Log.d("Squad", "Player removed from squad successfully"))
+                .addOnFailureListener(e -> Log.w("Squad", "Error removing player from squad", e));
+    }
+    public boolean isConnectedToInternet(Context context) {
+        ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (connectivityManager != null) {
+            NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+            return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+        }
+        return false;
     }
 }
 

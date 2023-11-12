@@ -3,7 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".TrainingPlanFragment">
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline"
@@ -11,30 +12,16 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         app:layout_constraintGuide_percent="0.30" />
-
     <ImageView
-        android:id="@+id/imageViewExercise"
+        android:id="@+id/imageViewTrainingPlan"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:scaleType="centerCrop"
-        android:src="@drawable/exercise_warmup_background"
+        android:src="@drawable/trainingplan_backgorund"
         app:layout_constraintBottom_toTopOf="@+id/guideline"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"/>
-
-
-    <Spinner
-        android:id="@+id/spinnerItemGroupExercise"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:entries="@array/item_groups"
-        android:padding="10dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageViewExercise" />
-
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -42,34 +29,39 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/spinnerItemGroupExercise"
+        app:layout_constraintTop_toBottomOf="@id/imageViewTrainingPlan"
         app:layout_constraintVertical_bias="1.0">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
-        <LinearLayout
-            android:id="@+id/linearLayoutExercise"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="vertical" >
+
+            <TextView
+            android:id="@+id/textViewTrainingPlan"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            >
-        </LinearLayout>
+            android:layout_height="wrap_content"
+            android:textSize="20sp"
+            android:textStyle="bold|italic"
+            android:text="@string/training_plan_title"
+            android:padding="5dp"
+            />
+
             <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:orientation="vertical"
-                android:layout_marginTop="10dp"
-                >
+            android:id="@+id/linearLayoutTrainingPlan"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+            </LinearLayout>
             <Button
-                android:id="@+id/buttonAddExercise"
+            android:id="@+id/buttonAddExercisetoPlan"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/add_exercise" />
-            </LinearLayout>
+                android:layout_marginTop="15dp"
+                android:text="@string/add_exercise_to_plan" />
         </LinearLayout>
     </ScrollView>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

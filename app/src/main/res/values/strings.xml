@@ -29,4 +29,20 @@
     <string name="starting_line_up">Starting line-up:</string>
     <string name="select_player">Select player</string>
     <string name="bench">Bench:</string>
+    <string name="exercise_name">Name</string>
+    <string name="exercise_description">Description</string>
+    <string name="add_exercise">Add Exercise</string>
+    <string name="members">members</string>
+    <string name="exercises">exercises</string>
+    <string name="training_plan">training plan</string>
+    <string name="squad">squad</string>
+    <string name="profile">profile</string>
+    <string name="training_plan_title">Training Plan:</string>
+    <string name="add_exercise_to_plan">Add exercise to plan</string>
+    <string-array name="item_groups">
+        <item>Warm up</item>
+        <item>Technique</item>
+        <item>Tactic</item>
+        <item>Strength</item>
+    </string-array>
 </resources>
