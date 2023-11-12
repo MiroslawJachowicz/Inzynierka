@@ -66,10 +66,7 @@ public class MemberFragment extends Fragment {
         }
     }
     private void loadUsersFromSameClub(String userClub) {
-        Firebasedb.collection("Users")
-                .whereEqualTo("club", userClub)
-                .get()
-                .addOnCompleteListener(task -> {
+        Firebasedb.collection("Users").whereEqualTo("club", userClub).get().addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         for (QueryDocumentSnapshot document : task.getResult()) {
                             String name = document.getString("username");
