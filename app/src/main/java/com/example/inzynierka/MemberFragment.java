@@ -31,7 +31,7 @@ public class MemberFragment extends Fragment {
     private FirebaseFirestore Firebasedb = FirebaseFirestore.getInstance();
     private FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
     private LinearLayout memberLinearLayout;
-    private Map<String, int[]> userGoalsAssistsMap = new HashMap<>();
+    private Map<String, int[]> userGoalsAssistsCardMap = new HashMap<>();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -97,21 +97,27 @@ public class MemberFragment extends Fragment {
             ImageView imageViewDecreaseGoals = userLayout.findViewById(R.id.imageViewDecrementGoals);
             ImageView imageViewIncreaseAssist = userLayout.findViewById(R.id.imageViewIncrementAssists);
             ImageView imageViewDecreaseAssist = userLayout.findViewById(R.id.imageViewDecrementAssists);
+            ImageView imageViewIncreaseYellowCard = userLayout.findViewById(R.id.imageViewIncrementYellowCards);
+            ImageView imageViewDecreaseYellowCard = userLayout.findViewById(R.id.imageViewDecrementYellowCards);
+            ImageView imageViewIncreaseRedCard = userLayout.findViewById(R.id.imageViewIncrementRedCards);
+            ImageView imageViewDecreaseRedCard = userLayout.findViewById(R.id.imageViewDecrementRedCards);
             TextView textViewName = userLayout.findViewById(R.id.textViewMemberNameSurname);
             TextView textViewRole = userLayout.findViewById(R.id.textViewMemberRole);
             TextView textViewGoals = userLayout.findViewById(R.id.textViewMemberGoals);
             TextView textViewAssists = userLayout.findViewById(R.id.textViewMemberAssists);
+            TextView textViewYellowCard = userLayout.findViewById(R.id.textViewMemberYellowCards);
+            TextView textViewRedCard = userLayout.findViewById(R.id.textViewMemberRedCards);
 
             textViewName.setText(name + " " + surname);
             textViewRole.setText(role);
 
-            fetchGoalsAndAssists(userId, textViewGoals, textViewAssists);
+            fetchGoalsAssistsCards(userId, textViewGoals, textViewAssists,textViewYellowCard,textViewRedCard);
 
                 imageViewIncreaseGoals.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                        if(Objects.equals(userRole, "Trainer"))
-                        updateGoalsInDatabase(userId, getUpdatedCount(userId, textViewGoals, true, 1));
+                        updateGoalsInDatabase(userId, getUpdatedCount(userId, textViewGoals, 0, 1));
                        else{
                            Toast.makeText(getActivity(), "Only trainer can change stats", Toast.LENGTH_SHORT).show();
                        }
@@ -122,7 +128,7 @@ public class MemberFragment extends Fragment {
                     @Override
                     public void onClick(View v) {
                         if(Objects.equals(userRole, "Trainer"))
-                        updateGoalsInDatabase(userId, getUpdatedCount(userId, textViewGoals, true, -1));
+                        updateGoalsInDatabase(userId, getUpdatedCount(userId, textViewGoals, 0, -1));
                         else{
                             Toast.makeText(getActivity(), "Only trainer can change stats", Toast.LENGTH_SHORT).show();
                         }
@@ -133,7 +139,7 @@ public class MemberFragment extends Fragment {
                     @Override
                     public void onClick(View v) {
                         if(Objects.equals(userRole, "Trainer"))
-                        updateAssistsInDatabase(userId, getUpdatedCount(userId, textViewAssists, false, 1));
+                        updateAssistsInDatabase(userId, getUpdatedCount(userId, textViewAssists, 1, 1));
                         else{
                             Toast.makeText(getActivity(), "Only trainer can change stats", Toast.LENGTH_SHORT).show();
                         }
@@ -144,32 +150,79 @@ public class MemberFragment extends Fragment {
                     @Override
                     public void onClick(View v) {
                         if(Objects.equals(userRole, "Trainer"))
-                        updateAssistsInDatabase(userId, getUpdatedCount(userId, textViewAssists, false, -1));
+                        updateAssistsInDatabase(userId, getUpdatedCount(userId, textViewAssists, 1, -1));
                         else{
                             Toast.makeText(getActivity(), "Only trainer can change stats", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
+            imageViewIncreaseYellowCard.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if(Objects.equals(userRole, "Trainer"))
+                        updateYellowCardInDatabase(userId, getUpdatedCount(userId, textViewYellowCard, 2, 1));
+                    else{
+                        Toast.makeText(getActivity(), "Only trainer can change stats", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+
+            imageViewDecreaseYellowCard.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if(Objects.equals(userRole, "Trainer"))
+                        updateYellowCardInDatabase(userId, getUpdatedCount(userId, textViewYellowCard, 2, -1));
+                    else{
+                        Toast.makeText(getActivity(), "Only trainer can change stats", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+            imageViewIncreaseRedCard.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if(Objects.equals(userRole, "Trainer"))
+                        updateRedCardInDatabase(userId, getUpdatedCount(userId, textViewRedCard, 3, 1));
+                    else{
+                        Toast.makeText(getActivity(), "Only trainer can change stats", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+
+            imageViewDecreaseRedCard.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if(Objects.equals(userRole, "Trainer"))
+                        updateRedCardInDatabase(userId, getUpdatedCount(userId, textViewRedCard, 3, -1));
+                    else{
+                        Toast.makeText(getActivity(), "Only trainer can change stats", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
             memberLinearLayout.addView(userLayout);
         }
     }
 
-    private void fetchGoalsAndAssists(String userId, TextView textViewGoals, TextView textViewAssists) {
+    private void fetchGoalsAssistsCards(String userId, TextView textViewGoals, TextView textViewAssists, TextView textViewYellowCard, TextView textViewRedCard) {
         Firebasedb.collection("Stats").document(userId).get()
                 .addOnSuccessListener(documentSnapshot -> {
                     if (documentSnapshot.exists()) {
                         int goals = documentSnapshot.getLong("goals") == null ? 0 : documentSnapshot.getLong("goals").intValue();
                         int assists = documentSnapshot.getLong("assists") == null ? 0 : documentSnapshot.getLong("assists").intValue();
-                        userGoalsAssistsMap.put(userId, new int[]{goals, assists});
+                        int yellowcards = documentSnapshot.getLong("yellowcards") == null ? 0 : documentSnapshot.getLong("yellowcards").intValue();
+                        int redcards = documentSnapshot.getLong("redcards") == null ? 0 : documentSnapshot.getLong("redcards").intValue();
+                        userGoalsAssistsCardMap.put(userId, new int[]{goals, assists,yellowcards,redcards});
 
                         textViewGoals.setText("Goals: " + goals);
                         textViewAssists.setText("Assists: " + assists);
+                        textViewYellowCard.setText("Yellow Cards: " + yellowcards);
+                        textViewRedCard.setText("Red Cards: " + redcards);
                     } else {
                         textViewGoals.setText("Goals: 0");
                         textViewAssists.setText("Assists: 0");
-
+                        textViewYellowCard.setText("Yellow Cards: 0");
+                        textViewRedCard.setText("Red Cards: 0");
                         setDefaultValuesInDatabase(userId);
-                        fetchGoalsAndAssists(userId,textViewGoals,textViewAssists);
+                        fetchGoalsAssistsCards(userId,textViewGoals,textViewAssists,textViewYellowCard,textViewRedCard);
                     }
                 })
                 .addOnFailureListener(e -> {
@@ -180,7 +233,8 @@ public class MemberFragment extends Fragment {
         Map<String, Object> defaultData = new HashMap<>();
         defaultData.put("goals", 0);
         defaultData.put("assists", 0);
-
+        defaultData.put("yellowcards", 0);
+        defaultData.put("redcards", 0);
         Firebasedb.collection("Stats").document(userId)
                 .set(defaultData, SetOptions.merge())
                 .addOnSuccessListener(aVoid -> {
@@ -189,31 +243,63 @@ public class MemberFragment extends Fragment {
                 });
     }
 
-    private int getUpdatedCount(String userId, TextView textView, boolean isGoals, int change) {
-        int[] userValues = userGoalsAssistsMap.get(userId);
+    private int getUpdatedCount(String userId, TextView textView, int eventType, int change) {
+        int[] userValues = userGoalsAssistsCardMap.get(userId);
 
-        if (userValues != null && userValues.length == 2) {
-            int currentValue = isGoals ? userValues[0] : userValues[1];
-            int newValue = currentValue + change;
+        if (userValues != null && userValues.length == 4) {
+            int index;
 
-            if (newValue >= 0) {
-                textView.setText((isGoals ? "Goals: " : "Assists: ") + newValue);
-                if (isGoals) {
-                    userValues[0] = newValue;
-                } else {
-                    userValues[1] = newValue;
-                }
-                userGoalsAssistsMap.put(userId, userValues);
-
-                return newValue;
-            } else {
-                return currentValue;
+            switch (eventType) {
+                case 0:  // Goal
+                    index = 0;
+                    int updatedGoals = Math.max(userValues[index] + change, 0);
+                    textView.setText("Goals: " + updatedGoals);
+                    userValues[index] = updatedGoals;
+                    break;
+                case 1:  // Assist
+                    index = 1;
+                    int updatedAssists = Math.max(userValues[index] + change, 0);
+                    textView.setText("Assists: " + updatedAssists);
+                    userValues[index] = updatedAssists;
+                    break;
+                case 2:  // Yellow Card
+                    index = 2;
+                    int updatedYellowCards = Math.max(userValues[index] + change, 0);
+                    textView.setText("Yellow Cards: " + updatedYellowCards);
+                    if (change > 0 && updatedYellowCards % 4 == 0) {
+                        // Pause the next match
+                        pauseNextMatchYellowCard();
+                    }
+                    userValues[index] = updatedYellowCards;
+                    break;
+                case 3:  // Red Card
+                    index = 3;
+                    int updatedRedCards = Math.max(userValues[index] + change, 0);
+                    textView.setText("Red Cards: " + updatedRedCards);
+                    if (change > 0) { // Check if red cards are increased
+                        // Pause the next match
+                        pauseNextMatchRedCard();
+                    }
+                    userValues[index] = updatedRedCards;
+                    break;
+                default:
+                    return 0;
             }
+
+            userGoalsAssistsCardMap.put(userId, userValues);
+            return userValues[index];
         } else {
             return 0;
         }
     }
+    private void pauseNextMatchYellowCard() {
 
+        Toast.makeText(getContext(), "Next match paused due to yellow cards.", Toast.LENGTH_SHORT).show();
+    }
+    private void pauseNextMatchRedCard() {
+
+        Toast.makeText(getContext(), "Next match paused due to red cards.", Toast.LENGTH_SHORT).show();
+    }
     private void updateGoalsInDatabase(String userId, int goals) {
         Map<String, Object> data = new HashMap<>();
         data.put("goals", goals);
@@ -237,5 +323,26 @@ public class MemberFragment extends Fragment {
                 .addOnFailureListener(e -> {
                 });
     }
+    private void updateYellowCardInDatabase(String userId, int yellowcards) {
+        Map<String, Object> data = new HashMap<>();
+        data.put("yellowcards", yellowcards);
 
+        Firebasedb.collection("Stats").document(userId)
+                .set(data, SetOptions.merge())
+                .addOnSuccessListener(aVoid -> {
+                })
+                .addOnFailureListener(e -> {
+                });
+    }
+    private void updateRedCardInDatabase(String userId, int redcards) {
+        Map<String, Object> data = new HashMap<>();
+        data.put("redcards", redcards);
+
+        Firebasedb.collection("Stats").document(userId)
+                .set(data, SetOptions.merge())
+                .addOnSuccessListener(aVoid -> {
+                })
+                .addOnFailureListener(e -> {
+                });
+    }
 }
