@@ -184,6 +184,7 @@ public class SignupFragment extends Fragment {
                                     }
                                 });
                         final String currentUserId = currentUser.getUid();
+
                         Map<String, Object> userObject = new HashMap<>();
                         userObject.put("userId", currentUserId);
                         userObject.put("username", name);
@@ -191,33 +192,54 @@ public class SignupFragment extends Fragment {
                         userObject.put("email", email);
                         userObject.put("role", is_Trainer);
                         userObject.put("club", club);
-
-                        collectionReference.add(userObject).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                            @Override
-                            public void onSuccess(DocumentReference documentReference) {
-                                documentReference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                        FirebaseFirestore.getInstance().collection("Users")
+                                .whereEqualTo("club", club)
+                                .get()
+                                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                                     @Override
-                                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                        if (task.getResult().exists()) {
-                                            SharedPreferences sharedPreferences = requireActivity().getPreferences(Context.MODE_PRIVATE);
-                                            SharedPreferences.Editor editor = sharedPreferences.edit();
-                                            editor.putBoolean("RememberMe", false);
-                                            editor.apply();
-                                            Navigation.findNavController(signup_btn).navigate(SignupFragmentDirections.actionSignupFragmentToLoginFragment());
+                                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                        if (task.isSuccessful()) {
+                                            if (!task.getResult().isEmpty()) {
+                                                userObject.put("isapprovedinclub", "no");
+                                                saveUserToDatabase(userObject);
+                                            } else {
+                                                userObject.put("isapprovedinclub", "yes");
+                                                saveUserToDatabase(userObject);
+                                            }
                                         }
                                     }
-                                });
-                            }
-                        }).addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                Toast.makeText(requireContext(), "Something went wrong" + e, Toast.LENGTH_SHORT).show();
-                            }
-                        });
+                                    });
                     }
                 }
             }
         });
+    }
+    private void saveUserToDatabase(Map<String, Object> userObject) {
+        collectionReference.add(userObject)
+                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                    @Override
+                    public void onSuccess(DocumentReference documentReference) {
+                        documentReference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                if (task.getResult().exists()) {
+                                    // Przejście do ekranu logowania po poprawnym utworzeniu konta
+                                    SharedPreferences sharedPreferences = requireActivity().getPreferences(Context.MODE_PRIVATE);
+                                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                                    editor.putBoolean("RememberMe", false);
+                                    editor.apply();
+                                    Navigation.findNavController(signup_btn).navigate(SignupFragmentDirections.actionSignupFragmentToLoginFragment());
+                                }
+                            }
+                        });
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(requireContext(), "Something went wrong" + e, Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
     @Override
     public void onStart() {

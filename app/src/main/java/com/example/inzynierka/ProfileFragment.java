@@ -20,14 +20,19 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class ProfileFragment extends Fragment {
 
@@ -386,23 +391,25 @@ public class ProfileFragment extends Fragment {
                             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                                 DocumentSnapshot documentSnapshot = queryDocumentSnapshots.getDocuments().get(0);
                                 String documentId = documentSnapshot.getId();
-                                usersRef.document(documentId).update("club", clubEditText.getText().toString().trim()).addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void unused) {
-                                        Toast.makeText(requireContext(), "Club has been updated", Toast.LENGTH_SHORT).show();
-                                        clubTextView.setText(String.valueOf(clubEditText.getText()));
-                                        clubTextView.setVisibility(View.VISIBLE);
-                                        imageViewEditClub.setVisibility(View.VISIBLE);
-                                        clubEditText.setVisibility(View.GONE);
-                                        imageViewCancelClub.setVisibility(View.GONE);
-                                        imageViewDoneClub.setVisibility(View.GONE);
-                                    }
-                                }).addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        Toast.makeText(requireContext(), "Something went wrong", Toast.LENGTH_SHORT).show();
-                                    }
-                                });
+                                Map<String, Object> updates = new HashMap<>();
+                                updates.put("club", clubEditText.getText().toString().trim());
+                                FirebaseFirestore.getInstance().collection("Users")
+                                        .whereEqualTo("club", clubEditText.getText().toString().trim())
+                                        .get()
+                                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                if (task.isSuccessful()) {
+                                                    if (!task.getResult().isEmpty()) {
+                                                        updates.put("isapprovedinclub", "no");
+                                                        saveClubChanges(updates,documentId);
+                                                    } else {
+                                                        updates.put("isapprovedinclub", "yes");
+                                                        saveClubChanges(updates,documentId);
+                                                    }
+                                                }
+                                            }
+                                        });
                             }
                         }).addOnFailureListener(new OnFailureListener() {
                             @Override
@@ -413,6 +420,26 @@ public class ProfileFragment extends Fragment {
                     }else{
                         Toast.makeText(requireContext(), "No internet connection", Toast.LENGTH_SHORT).show();
                     }
+                }
+            });
+        }
+        private void saveClubChanges(Map<String, Object> updates,String documentId) {
+            CollectionReference usersRef = FirebaseFirestore.getInstance().collection("Users");
+            usersRef.document(documentId).update(updates).addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void unused) {
+                    Toast.makeText(requireContext(), "Club has been updated", Toast.LENGTH_SHORT).show();
+                    clubTextView.setText(String.valueOf(clubEditText.getText()));
+                    clubTextView.setVisibility(View.VISIBLE);
+                    imageViewEditClub.setVisibility(View.VISIBLE);
+                    clubEditText.setVisibility(View.GONE);
+                    imageViewCancelClub.setVisibility(View.GONE);
+                    imageViewDoneClub.setVisibility(View.GONE);
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Toast.makeText(requireContext(), "Something went wrong", Toast.LENGTH_SHORT).show();
                 }
             });
         }

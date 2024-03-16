@@ -73,8 +73,15 @@ public class SquadFragment extends Fragment {
                         if (!queryDocumentSnapshots.isEmpty()) {
                             DocumentSnapshot documentSnapshot = queryDocumentSnapshots.getDocuments().get(0);
                             String userClub = documentSnapshot.getString("club");
-                            if (userClub != null) {
-                                loadSquadFromFirebase(userClub);
+                            String isApproved = documentSnapshot.getString("isapprovedinclub");
+                            if (isAdded()) {
+                                if (userClub != null && Objects.equals(isApproved, "yes")) {
+                                    loadSquadFromFirebase(userClub);
+                                }else if (Objects.equals(isApproved, "rejected")) {
+                                    Toast.makeText(requireContext(), "You have been rejected. Please change the club", Toast.LENGTH_SHORT).show();
+                                } else{
+                                    Toast.makeText(requireContext(), "You are not approved at the club", Toast.LENGTH_SHORT).show();
+                                }
                             }
                         }
                     }).addOnFailureListener(e -> {
@@ -115,7 +122,10 @@ public class SquadFragment extends Fragment {
                 for (QueryDocumentSnapshot document : task.getResult()) {
                     String name = document.getString("username");
                     String surname = document.getString("surname");
+                    String isApproved = document.getString("isapprovedinclub");
+                    if(Objects.equals(isApproved, "yes")){
                     playerNames.add(name + " " + surname);
+                    }
                 }
                 callback.onCallback(playerNames);
             } else {

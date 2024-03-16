@@ -63,8 +63,15 @@ public class MemberFragment extends Fragment {
                                 DocumentSnapshot documentSnapshot = queryDocumentSnapshots.getDocuments().get(0);
                                 String userClub = documentSnapshot.getString("club");
                                 String userRole = documentSnapshot.getString("role");
-                                if (userClub != null) {
-                                    loadUsersFromSameClub(userClub,userRole);
+                                String isApproved = documentSnapshot.getString("isapprovedinclub");
+                                if(isAdded()) {
+                                    if (userClub != null && Objects.equals(isApproved, "yes")) {
+                                        loadUsersFromSameClub(userClub, userRole);
+                                    } else if (Objects.equals(isApproved, "rejected")) {
+                                        Toast.makeText(requireContext(), "You have been rejected. Please change the club", Toast.LENGTH_SHORT).show();
+                                    } else{
+                                        Toast.makeText(requireContext(), "You are not approved at the club", Toast.LENGTH_SHORT).show();
+                                    }
                                 }
                             }
                     })
@@ -81,14 +88,20 @@ public class MemberFragment extends Fragment {
                             String surname = document.getString("surname");
                             String role = document.getString("role");
                             String userId = document.getString("userId");
-                            addUserToScrollView(name, surname, role,userId,userRole);
+                            String isApproved = document.getString("isapprovedinclub");
+                            if(Objects.equals(isApproved, "yes")) {
+                                addUserToScrollViewApproved(name, surname, role, userId, userRole);
+                            } else if(Objects.equals(isApproved, "no")){
+                                String documentId = document.getId();
+                                addUserToScrollViewnotApproved(name, surname, role,isApproved, userId, userRole,documentId);
+                            }
                         }
                     }
                 });
     }
 
     @SuppressLint("SetTextI18n")
-    private void addUserToScrollView(String name, String surname, String role, String userId,String userRole) {
+    private void addUserToScrollViewApproved(String name, String surname, String role, String userId, String userRole) {
         if (isAdded()) {
             LayoutInflater inflater = LayoutInflater.from(getContext());
             View userLayout = inflater.inflate(R.layout.member_layout, memberLinearLayout, false);
@@ -201,7 +214,49 @@ public class MemberFragment extends Fragment {
             memberLinearLayout.addView(userLayout);
         }
     }
+    private void addUserToScrollViewnotApproved(String name, String surname, String role,String isApproved, String userId, String userRole, String documentId) {
+        if (isAdded()) {
+            LayoutInflater inflater = LayoutInflater.from(getContext());
+            View userLayout = inflater.inflate(R.layout.not_member_layout, memberLinearLayout, false);
+            TextView textViewName = userLayout.findViewById(R.id.textViewMemberNameSurname);
+            ImageView imageViewYes = userLayout.findViewById(R.id.imageViewYes);
+            ImageView imageViewRejected = userLayout.findViewById(R.id.imageViewRejected);
+            textViewName.setText(name + " " + surname);
+            imageViewYes.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    updateApprovalStatus(documentId, "yes");
+                }
+            });
+            imageViewRejected.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    updateApprovalStatus(documentId, "rejected");
+                }
+            });
+            memberLinearLayout.addView(userLayout);
+        }
+    }
+    private void updateApprovalStatus(String documentId, String status) {
+        Map<String, Object> data = new HashMap<>();
+        data.put("isapprovedinclub", status);
 
+        Firebasedb.collection("Users").document(documentId)
+                .set(data, SetOptions.merge())
+                .addOnSuccessListener(aVoid -> {
+                    if (Objects.equals(status, "yes")) {
+                        Toast.makeText(getActivity(), "User has been approved", Toast.LENGTH_SHORT).show();
+                        memberLinearLayout.removeAllViews();
+                        getCurrentMemberClub();
+                    } else if (Objects.equals(status, "rejected")) {
+                        Toast.makeText(getActivity(), "User has been rejected", Toast.LENGTH_SHORT).show();
+                        memberLinearLayout.removeAllViews();
+                        getCurrentMemberClub();
+                    }
+                })
+                .addOnFailureListener(e -> {
+                });
+    }
     private void fetchGoalsAssistsCards(String userId, TextView textViewGoals, TextView textViewAssists, TextView textViewYellowCard, TextView textViewRedCard) {
         Firebasedb.collection("Stats").document(userId).get()
                 .addOnSuccessListener(documentSnapshot -> {

@@ -87,8 +87,9 @@ public class TrainingPlanFragment extends Fragment {
                             DocumentSnapshot userDocument = task.getResult().getDocuments().get(0);
                             userClub = userDocument.getString("club");
                             userRole = userDocument.getString("role");
-                            if (userClub != null && userRole != null) {
-                                if (isAdded()) {
+                            String isApproved = userDocument.getString("isapprovedinclub");
+                            if (isAdded()) {
+                            if (userClub != null && userRole != null && Objects.equals(isApproved, "yes")) {
                                     sharedPreferences = getActivity().getSharedPreferences("TrainingPlanPrefs_" + userClub, Context.MODE_PRIVATE);
                                     restoreExerciseCountMap();
                                     restoreSavedExercises();
@@ -106,9 +107,13 @@ public class TrainingPlanFragment extends Fragment {
                                             }
                                         }
                                     });
-                                }
+                                }else if (Objects.equals(isApproved, "rejected")) {
+                                Toast.makeText(requireContext(), "You have been rejected. Please change the club", Toast.LENGTH_SHORT).show();
+                            } else{
+                                Toast.makeText(requireContext(), "You are not approved at the club", Toast.LENGTH_SHORT).show();
                             }
-                        }
+                            }
+                            }
                     });
         }
     }
@@ -202,7 +207,12 @@ public class TrainingPlanFragment extends Fragment {
 
         textViewName.setText(name);
         textViewDescription.setText(description);
-        textViewCount.setText(exerciseCountMap.getOrDefault(name, 0) +" time used");
+        int usageCount = exerciseCountMap.getOrDefault(name, 0);
+        if (usageCount == 1) {
+            textViewCount.setText(usageCount + " time used");
+        } else {
+            textViewCount.setText(usageCount + " times used");
+        }
 
         imageViewCancel.setOnClickListener(new View.OnClickListener() {
             @Override

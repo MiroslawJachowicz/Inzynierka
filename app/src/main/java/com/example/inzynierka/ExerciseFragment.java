@@ -92,47 +92,56 @@ public class ExerciseFragment extends Fragment {
                                 DocumentSnapshot documentSnapshot = queryDocumentSnapshots.getDocuments().get(0);
                                 String userRole = documentSnapshot.getString("role");
                                 String userClub = documentSnapshot.getString("club");
-                                buttonAddExercise.setOnClickListener(new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View v) {
-                                        if (Objects.equals(userRole, "Trainer")) {
-                                            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                                            LayoutInflater inflater = getActivity().getLayoutInflater();
-                                            View dialogView = inflater.inflate(R.layout.exercise_layout, null);
-                                            EditText editTextName = dialogView.findViewById(R.id.editTextExerciseName);
-                                            EditText editTextDescription = dialogView.findViewById(R.id.editTextExerciseDescription);
+                                String isApproved = documentSnapshot.getString("isapprovedinclub");
+                                    if(isAdded()) {
+                                    if (Objects.equals(isApproved, "yes")) {
+                                        buttonAddExercise.setOnClickListener(new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View v) {
+                                                if (Objects.equals(userRole, "Trainer")) {
+                                                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                                                    LayoutInflater inflater = getActivity().getLayoutInflater();
+                                                    View dialogView = inflater.inflate(R.layout.exercise_layout, null);
+                                                    EditText editTextName = dialogView.findViewById(R.id.editTextExerciseName);
+                                                    EditText editTextDescription = dialogView.findViewById(R.id.editTextExerciseDescription);
 
-                                            builder.setView(dialogView)
-                                                    .setTitle("Add Exercise")
-                                                    .setPositiveButton("Add", null) // We'll override this below
-                                                    .setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
+                                                    builder.setView(dialogView)
+                                                            .setTitle("Add Exercise")
+                                                            .setPositiveButton("Add", null) // We'll override this below
+                                                            .setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
 
-                                            AlertDialog dialog = builder.create();
-                                            dialog.setOnShowListener(dialogInterface -> {
-                                                Button button = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-                                                button.setOnClickListener(view -> {
-                                                    String name = editTextName.getText().toString().trim();
-                                                    String description = editTextDescription.getText().toString().trim();
-                                                    String group = spinnerItemGroup.getSelectedItem().toString();
-                                                    if (name.isEmpty()) {
-                                                        Toast.makeText(getActivity(), "Exercise name field is empty", Toast.LENGTH_SHORT).show();
-                                                    } else if (description.isEmpty()) {
-                                                        Toast.makeText(getActivity(), "Exercise description field is empty", Toast.LENGTH_SHORT).show();
-                                                    } else {
-                                                        saveExerciseToFirebase(name, description, group,userClub);
-                                                        dialog.dismiss();
-                                                        String selectedGroup = spinnerItemGroup.getSelectedItem().toString();
-                                                        clearExistingExercises();
-                                                        loadExerciseFromFirebase(selectedGroup);
-                                                    }
-                                                });
-                                            });
-                                            dialog.show();
-                                        }else {
-                                            Toast.makeText(getActivity(), "Only trainer can add exercise", Toast.LENGTH_SHORT).show();
-                                        }
+                                                    AlertDialog dialog = builder.create();
+                                                    dialog.setOnShowListener(dialogInterface -> {
+                                                        Button button = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+                                                        button.setOnClickListener(view -> {
+                                                            String name = editTextName.getText().toString().trim();
+                                                            String description = editTextDescription.getText().toString().trim();
+                                                            String group = spinnerItemGroup.getSelectedItem().toString();
+                                                            if (name.isEmpty()) {
+                                                                Toast.makeText(getActivity(), "Exercise name field is empty", Toast.LENGTH_SHORT).show();
+                                                            } else if (description.isEmpty()) {
+                                                                Toast.makeText(getActivity(), "Exercise description field is empty", Toast.LENGTH_SHORT).show();
+                                                            } else {
+                                                                saveExerciseToFirebase(name, description, group, userClub);
+                                                                dialog.dismiss();
+                                                                String selectedGroup = spinnerItemGroup.getSelectedItem().toString();
+                                                                clearExistingExercises();
+                                                                loadExerciseFromFirebase(selectedGroup);
+                                                            }
+                                                        });
+                                                    });
+                                                    dialog.show();
+                                                } else {
+                                                    Toast.makeText(getActivity(), "Only trainer can add exercise", Toast.LENGTH_SHORT).show();
+                                                }
+                                            }
+                                        });
+                                    }else if (Objects.equals(isApproved, "rejected")) {
+                                        Toast.makeText(requireContext(), "You have been rejected. Please change the club", Toast.LENGTH_SHORT).show();
+                                    } else{
+                                        Toast.makeText(requireContext(), "You are not approved at the club", Toast.LENGTH_SHORT).show();
                                     }
-                                });
+                                }
                         }
                         }
                     }).addOnFailureListener(new OnFailureListener() {
@@ -199,24 +208,27 @@ public class ExerciseFragment extends Fragment {
                         if (!queryDocumentSnapshots.isEmpty()) {
                             DocumentSnapshot userDocSnapshot = queryDocumentSnapshots.getDocuments().get(0);
                             String userClub = userDocSnapshot.getString("club");
+                            String isApproved = userDocSnapshot.getString("isapprovedinclub");
 
-                            Firebasedb.collection(group)
-                                    .whereEqualTo("club", userClub)
-                                    .get()
-                                    .addOnCompleteListener(task -> {
-                                        if (task.isSuccessful()) {
-                                            QuerySnapshot querySnapshot = task.getResult();
-                                            if (querySnapshot != null) {
-                                                clearExistingExercises();
-                                                for (DocumentSnapshot document : querySnapshot.getDocuments()) {
-                                                    String name = document.getString("name");
-                                                    String description = document.getString("description");
-                                                    String documentId = document.getId();
-                                                    addExerciseToScrollView(name, description, documentId);
+                            if(Objects.equals(isApproved, "yes")) {
+                                Firebasedb.collection(group)
+                                        .whereEqualTo("club", userClub)
+                                        .get()
+                                        .addOnCompleteListener(task -> {
+                                            if (task.isSuccessful()) {
+                                                QuerySnapshot querySnapshot = task.getResult();
+                                                if (querySnapshot != null) {
+                                                    clearExistingExercises();
+                                                    for (DocumentSnapshot document : querySnapshot.getDocuments()) {
+                                                        String name = document.getString("name");
+                                                        String description = document.getString("description");
+                                                        String documentId = document.getId();
+                                                        addExerciseToScrollView(name, description, documentId);
+                                                    }
                                                 }
                                             }
-                                        }
-                                    });
+                                        });
+                            }
                         }
                     });
         }
